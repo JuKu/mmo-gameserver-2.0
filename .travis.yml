@@ -1,0 +1,52 @@
+language: java
+jdk: oraclejdk8
+
+services:
+  - mysql
+
+before_install:
+  - mysql -e 'DROP DATABASE IF EXISTS my_test_database;'
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS my_test_database;'
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.sonar/cache
+    - $HOME/.cache
+    - $HOME/.m2
+
+addons:
+  sonarcloud:
+    organization: "jukusoft"
+    #jukusoft, juku-github
+
+#don't do a shallow clone (for sonarqube)
+git:
+  depth: 9999999
+
+script:
+  - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+#  - mvn clean verify
+#  - mvn clean install
+  - mvn -e clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.login=${SONAR_TOKEN}
+#  - mvn cobertura:cobertura
+
+notifications:
+  email: false
+  webhooks:
+    urls:
+      - https://fathomless-fjord-24024.herokuapp.com/notify
+    on_success: always # default: always
+    on_failure: always # default: always
+    on_start: never   # default: never
+    on_cancel: always # default: always
+    on_error: always # default: always
+
+#notifications:
+#  email: false
+#  webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
