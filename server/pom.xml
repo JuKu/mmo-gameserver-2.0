@@ -11,5 +11,105 @@
 
 	<artifactId>mmo-gameserver-server</artifactId>
 
+	<dependencies>
+		<dependency>
+			<groupId>com.jukusoft</groupId>
+			<artifactId>vertx-binary-serializer</artifactId>
+			<version>${vertx.serializer.version}</version>
+		</dependency>
+
+		<!-- If you want to use TCPServer and TCPClient, you need also this dependency -->
+		<dependency>
+			<groupId>com.jukusoft</groupId>
+			<artifactId>vertx-binary-serializer-connection</artifactId>
+			<version>${vertx.serializer.version}</version>
+		</dependency>
+
+		<!-- shared classes from mmo-engine-client -->
+		<dependency>
+			<groupId>com.jukusoft</groupId>
+			<artifactId>shared-commons-library</artifactId>
+			<version>${shared.library.version}</version>
+		</dependency>
+
+		<!-- JCache -->
+		<dependency>
+			<groupId>javax.cache</groupId>
+			<artifactId>cache-api</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<!-- Hazelcast -->
+		<dependency>
+			<groupId>com.hazelcast</groupId>
+			<artifactId>hazelcast</artifactId>
+			<version>${hazelcast.version}</version>
+		</dependency>
+
+		<!-- Hazelcast client -->
+		<dependency>
+			<groupId>com.hazelcast</groupId>
+			<artifactId>hazelcast-client</artifactId>
+			<version>${hazelcast.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/io.vertx/vertx-core -->
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-core</artifactId>
+			<version>${vertx.version}</version>
+		</dependency>
+
+		<!-- Vert.x Cluster-Management with Hazelcast -->
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-hazelcast</artifactId>
+			<version>${vertx.version}</version>
+		</dependency>
+
+		<!-- jdbc client for vertx -->
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-jdbc-client</artifactId>
+			<version>${vertx.version}</version>
+		</dependency>
+
+		<!-- mysql connection pooling -->
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>${hikaricp.version}</version>
+
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- MySQL connector -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.connector.version}</version>
+		</dependency>
+
+		<!-- flyway for database upgrades / migration -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>${flyway.version}</version>
+		</dependency>
+	</dependencies>
+
 
 </project>
