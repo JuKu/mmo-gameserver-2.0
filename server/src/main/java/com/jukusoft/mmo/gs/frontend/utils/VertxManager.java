@@ -21,7 +21,7 @@ public class VertxManager {
     //flag, if vertx is initialized
     protected boolean initialized = false;
 
-    protected static final String PROXY_TAG = "Proxy";
+    protected static final String GS_TAG = "GameServer";
 
     /**
     * default constructor
@@ -38,12 +38,12 @@ public class VertxManager {
         this.vertxOptions = new VertxOptions();
 
         //set thread count
-        vertxOptions.setEventLoopPoolSize(Config.getInt(PROXY_TAG, "eventThreads"));
-        vertxOptions.setWorkerPoolSize(Config.getInt(PROXY_TAG, "workerThreads"));
+        vertxOptions.setEventLoopPoolSize(Config.getInt(GS_TAG, "eventThreads"));
+        vertxOptions.setWorkerPoolSize(Config.getInt(GS_TAG, "workerThreads"));
 
         //set thread pool timeouts
-        vertxOptions.setMaxEventLoopExecuteTime(Config.getInt(PROXY_TAG, "maxEventLoopExecuteTime"));
-        vertxOptions.setMaxWorkerExecuteTime(Config.getInt(PROXY_TAG, "maxWorkerExecuteTime"));
+        vertxOptions.setMaxEventLoopExecuteTime(Config.getInt(GS_TAG, "maxEventLoopExecuteTime"));
+        vertxOptions.setMaxWorkerExecuteTime(Config.getInt(GS_TAG, "maxWorkerExecuteTime"));
 
         //use clustered mode of vert.x
         this.vertxOptions.setClustered(true);
