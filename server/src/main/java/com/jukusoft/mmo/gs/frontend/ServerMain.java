@@ -9,10 +9,7 @@ import com.jukusoft.mmo.engine.shared.logger.LogWriter;
 import com.jukusoft.mmo.engine.shared.utils.Utils;
 import com.jukusoft.mmo.gs.frontend.database.DatabaseFactory;
 import com.jukusoft.mmo.gs.frontend.log.HzLogger;
-import com.jukusoft.mmo.gs.frontend.utils.ConfigLoader;
-import com.jukusoft.mmo.gs.frontend.utils.HazelcastFactory;
-import com.jukusoft.mmo.gs.frontend.utils.VersionPrinter;
-import com.jukusoft.mmo.gs.frontend.utils.VertxManager;
+import com.jukusoft.mmo.gs.frontend.utils.*;
 import io.vertx.core.Vertx;
 
 import java.io.File;
@@ -75,6 +72,9 @@ public class ServerMain {
         Vertx vertx = vertxManager.getVertx();
 
         //TODO: add code here
+
+        //show console prompt and wait
+        ConsoleWaiter.execute();
 
         /**
          * shutdown process
