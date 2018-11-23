@@ -53,7 +53,7 @@ public class ServerMain {
 
         //load config
         Utils.printSection("Configuration & Init");
-        ConfigLoader.load(args);
+        ConfigLoader.load("./config/", args);
 
         //initialize hazelcast
         Log.i(HAZELCAST_TAG, "create new hazelcast instance...");

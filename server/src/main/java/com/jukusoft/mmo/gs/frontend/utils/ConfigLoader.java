@@ -14,10 +14,10 @@ public class ConfigLoader {
         //
     }
 
-    public static void load (String[] args) throws IOException {
+    public static void load (String configDir, String[] args) throws IOException {
         //load all config files
         Log.i(CONFIG_TAG, "load configs in directory 'config/'...");
-        Config.loadDir(new File("./config/"));
+        Config.loadDir(new File(configDir));
 
         //overrides config with params
         for (String param : args) {
