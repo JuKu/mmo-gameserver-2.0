@@ -12,7 +12,6 @@ temp
 logs
 logs/*
 !logs/.keep
-!*.java
 
 hazelcast*
 config/hazelcast.cfg
@@ -35,6 +34,8 @@ config/mysql.cfg
 
 !.keep
 !*.keep
+
+!*.java
 
 tools/runnable-hiero.jar
 
