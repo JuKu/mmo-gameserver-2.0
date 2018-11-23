@@ -2,7 +2,6 @@ package com.jukusoft.mmo.gs.frontend.utils;
 
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
-import com.jukusoft.mmo.engine.shared.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +14,7 @@ public class ConfigLoader {
         //
     }
 
-    public static void load (String args[]) throws IOException {
+    public static void load (String[] args) throws IOException {
         //load all config files
         Log.i(CONFIG_TAG, "load configs in directory 'config/'...");
         Config.loadDir(new File("./config/"));

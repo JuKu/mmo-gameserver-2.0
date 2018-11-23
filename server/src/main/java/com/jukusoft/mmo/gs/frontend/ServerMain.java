@@ -88,7 +88,7 @@ public class ServerMain {
         Log.i("Shutdown", "Shutdown now.");
 
         //shutdown vertx
-        //vertxManager.shutdown();
+        vertxManager.shutdown();
 
         //shutdown logger and write all remaining logs to file
         Log.shutdown();

@@ -1,12 +1,9 @@
 package com.jukusoft.mmo.gs.frontend.utils;
 
-import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.utils.Utils;
 import com.jukusoft.mmo.engine.shared.version.Version;
 import com.jukusoft.mmo.gs.frontend.ServerMain;
-
-import java.io.File;
 
 public class VersionPrinter {
 
