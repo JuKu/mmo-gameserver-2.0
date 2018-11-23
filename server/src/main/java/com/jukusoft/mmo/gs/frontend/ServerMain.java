@@ -1,9 +1,15 @@
 package com.jukusoft.mmo.gs.frontend;
 
+import com.hazelcast.config.CacheSimpleConfig;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
+import com.jukusoft.mmo.engine.shared.logger.LogWriter;
 import com.jukusoft.mmo.engine.shared.utils.Utils;
+import com.jukusoft.mmo.gs.frontend.log.HzLogger;
 import com.jukusoft.mmo.gs.frontend.utils.ConfigLoader;
+import com.jukusoft.mmo.gs.frontend.utils.HazelcastFactory;
 import com.jukusoft.mmo.gs.frontend.utils.VersionPrinter;
 
 import java.io.File;
@@ -13,6 +19,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ServerMain {
+
+    protected static final String HAZELCAST_TAG = "Hazelcast";
 
     public static void main (String[] args) {
         try {
@@ -43,6 +51,16 @@ public class ServerMain {
         //load config
         Utils.printSection("Configuration & Init");
         ConfigLoader.load(args);
+
+        Log.i(HAZELCAST_TAG, "create new hazelcast instance...");
+        HazelcastInstance hazelcastInstance = createHazelcastInstance();
+
+        Log.i(HAZELCAST_TAG, "hazelcast started successfully.");
+
+        //create and attach hazelcast logger
+        Log.i("Logging", "enable hazelcast cluster logging...");
+        HzLogger hzLogger = new HzLogger(hazelcastInstance);
+        LogWriter.attachListener(hzLogger);
 
         //TODO: add code here
 
@@ -83,6 +101,23 @@ public class ServerMain {
         //force JVM shutdown
         if (Config.forceExit) {
             System.exit(0);
+        }
+    }
+
+    protected static HazelcastInstance createHazelcastInstance () {
+        if (Config.getBool(HAZELCAST_TAG, "standalone")) {
+            //create an new hazelcast instance
+            com.hazelcast.config.Config config = new com.hazelcast.config.Config();
+
+            //disable hazelcast logging
+            config.setProperty("hazelcast.logging.type", "none");
+
+            CacheSimpleConfig cacheConfig = new CacheSimpleConfig();
+            config.getCacheConfigs().put("session-cache", cacheConfig);
+
+            return Hazelcast.newHazelcastInstance(config);
+        } else {
+            return HazelcastFactory.createHzInstanceFromConfig();
         }
     }
 
