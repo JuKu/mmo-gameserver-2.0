@@ -12,6 +12,7 @@ temp
 logs
 logs/*
 !logs/.keep
+!*.java
 
 hazelcast*
 config/hazelcast.cfg
