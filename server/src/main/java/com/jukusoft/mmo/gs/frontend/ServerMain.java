@@ -52,9 +52,9 @@ public class ServerMain {
         Utils.printSection("Configuration & Init");
         ConfigLoader.load(args);
 
+        //initialize hazelcast
         Log.i(HAZELCAST_TAG, "create new hazelcast instance...");
         HazelcastInstance hazelcastInstance = createHazelcastInstance();
-
         Log.i(HAZELCAST_TAG, "hazelcast started successfully.");
 
         //create and attach hazelcast logger
