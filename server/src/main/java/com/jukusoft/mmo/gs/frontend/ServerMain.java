@@ -3,10 +3,12 @@ package com.jukusoft.mmo.gs.frontend;
 import com.hazelcast.config.CacheSimpleConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IList;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.logger.LogWriter;
 import com.jukusoft.mmo.engine.shared.utils.Utils;
+import com.jukusoft.mmo.engine.shared.version.Version;
 import com.jukusoft.mmo.gs.frontend.database.DatabaseFactory;
 import com.jukusoft.mmo.gs.frontend.log.HzLogger;
 import com.jukusoft.mmo.gs.frontend.utils.*;
@@ -111,6 +113,11 @@ public class ServerMain {
             Thread.sleep(100);
         }
 
+        //inform others in cluster that this gs server exists
+        IList<String> serverList = hazelcastInstance.getList("gs-servers-list");
+        final String serverFingerprint = host + ":" + port + ":" + Version.getInstance().getVersion();
+        serverList.add(serverFingerprint);
+
         //show console prompt and wait
         ConsoleWaiter.execute();
 
@@ -130,6 +137,9 @@ public class ServerMain {
 
         //shutdown logger and write all remaining logs to file
         shutdownLogs();
+
+        //remove gs server from list
+        serverList.remove(serverFingerprint);
 
         //check, if there are other active threads, except the main thread
         if (threadSet.size() > 1) {
