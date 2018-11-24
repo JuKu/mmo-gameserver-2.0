@@ -19,3 +19,15 @@ Another try to build a mmo game server
 A gameserver can handle multiple regions.
 
 ![Region Server](./docs/images/gs.png)
+
+## Databases
+
+This gameserver uses 2 databases, one for **static** game data, which will only be changed on game updates / patch (e.q. races, game world itself) and one for **all dynamic things**.
+
+  - static database
+      * collision data
+      * game world information
+      * races
+  - dynamic database
+      * characters
+      * dynamic environment (weather and so on)
