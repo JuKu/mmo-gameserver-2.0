@@ -47,10 +47,6 @@ public class DatabaseUpgrader {
         this.flyway.setEncoding("utf-8");
     }
 
-    public void setClasspathLocation (String loc) {
-        this.flyway.setLocations(loc);
-    }
-
     public void migrate () {
         for (String loc : this.flyway.getLocations()) {
             Log.v("Flyway", "flyway location: " + loc);
