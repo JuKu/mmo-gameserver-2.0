@@ -47,6 +47,21 @@ public class DatabaseTest {
     }
 
     @Test
+    public void testInit1 () throws IOException, SQLException {
+        //load test mysql configuration
+        MySQLConfig mySQLConfig = createConfig();
+
+        //initialize database
+        Database.init("static", mySQLConfig);
+
+        assertNotNull(Database.getDataSource("static"));
+        assertNotNull(Database.getConnection("static"));
+
+        //close database connection
+        Database.close();
+    }
+
+    @Test
     public void testReplacePrefix () throws IOException {
         //load test mysql configuration
         MySQLConfig mySQLConfig = createConfig();

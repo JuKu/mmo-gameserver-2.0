@@ -2,12 +2,14 @@ package com.jukusoft.mmo.gs.frontend.database;
 
 import com.carrotsearch.hppc.ObjectObjectHashMap;
 import com.carrotsearch.hppc.ObjectObjectMap;
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.function.Consumer;
 
 public class Database {
 
@@ -86,6 +88,11 @@ public class Database {
 
     public static void close () {
         dataSource.close();
+
+        //close all other data sources too
+        dataSourceMap.forEach((Consumer<ObjectObjectCursor<String, HikariDataSource>>) cursor -> {
+            cursor.value.close();
+        });
     }
 
     public static String replacePrefix (String query) {
