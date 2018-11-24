@@ -10,17 +10,24 @@ import com.jukusoft.mmo.engine.shared.utils.Utils;
 import com.jukusoft.mmo.gs.frontend.database.DatabaseFactory;
 import com.jukusoft.mmo.gs.frontend.log.HzLogger;
 import com.jukusoft.mmo.gs.frontend.utils.*;
+import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
+import com.jukusoft.vertx.connection.clientserver.Server;
+import com.jukusoft.vertx.connection.clientserver.TCPServer;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ServerMain {
 
     protected static final String HAZELCAST_TAG = "Hazelcast";
+    protected static final String SECTION_NAME = "GameServer";
 
     public static void main (String[] args) {
         try {
@@ -71,7 +78,38 @@ public class ServerMain {
         vertxManager.init(hazelcastInstance);
         Vertx vertx = vertxManager.getVertx();
 
+        //get host (interface) and port from config
+        String host = Config.get(SECTION_NAME, "host");
+        int port = Config.getInt(SECTION_NAME, "port");
+
+        //flag, if server started successfully
+        AtomicBoolean b = new AtomicBoolean(false);
+
+        //start tcp server
+        TCPServer server = new TCPServer();
+        server.init(vertx);
+        server.setClientHandler(event -> {
+            Log.i("TCPServer", "new client connection.");
+        });
+
+        //try to start tcp server
+        server.start(host, port, event -> {
+            if (event.succeeded()) {
+                Log.i("Main", "tcp server started successfully!");
+                b.set(true);
+            } else {
+                Log.w("Error", "Couldn't start tcp server... ", event.cause());
+                shutdownLogs();
+                System.exit(1);
+            }
+        });
+
         //TODO: add code here
+
+        //wait while server is starting
+        if (!b.get()) {
+            Thread.sleep(100);
+        }
 
         //show console prompt and wait
         ConsoleWaiter.execute();
@@ -91,10 +129,7 @@ public class ServerMain {
         vertxManager.shutdown();
 
         //shutdown logger and write all remaining logs to file
-        Log.shutdown();
-
-        //wait 200ms, so logs can be written to file
-        Thread.sleep(500);
+        shutdownLogs();
 
         //check, if there are other active threads, except the main thread
         if (threadSet.size() > 1) {
@@ -113,6 +148,18 @@ public class ServerMain {
         //force JVM shutdown
         if (Config.forceExit) {
             System.exit(0);
+        }
+    }
+
+    protected static void shutdownLogs () {
+        //shutdown logger and write all remaining logs to file
+        Log.shutdown();
+
+        //wait 200ms, so logs can be written to file
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //don't do anything here
         }
     }
 
