@@ -17,21 +17,30 @@ public class MySQLConfig {
     protected int prepStmtCacheSize = 250;
     protected int prepStmtCacheSqlLimit = 2048;
 
+    //for database upgrader
+    protected String migrationPath = "classpath:db/migration";
+
     public MySQLConfig() {
         //
     }
 
-    public void load () {
-        this.host = Config.get(SECTION_NAME, "host");
-        this.port = Config.getInt(SECTION_NAME, "port");
-        this.database = Config.get(SECTION_NAME, "database");
-        this.user = Config.get(SECTION_NAME, "user");
-        this.password = Config.get(SECTION_NAME, "password");
-        this.prefix = Config.get(SECTION_NAME, "prefix");
+    public void load (String section) {
+        this.host = Config.get(section, "host");
+        this.port = Config.getInt(section, "port");
+        this.database = Config.get(section, "database");
+        this.user = Config.get(section, "user");
+        this.password = Config.get(section, "password");
+        this.prefix = Config.get(section, "prefix");
 
-        this.maxPoolSize = Config.getInt(SECTION_NAME, "max_pool_size");
-        this.prepStmtCacheSize = Config.getInt(SECTION_NAME, "prepStmtCacheSize");
-        this.prepStmtCacheSqlLimit = Config.getInt(SECTION_NAME, "prepStmtCacheSqlLimit");
+        this.maxPoolSize = Config.getInt(section, "max_pool_size");
+        this.prepStmtCacheSize = Config.getInt(section, "prepStmtCacheSize");
+        this.prepStmtCacheSqlLimit = Config.getInt(section, "prepStmtCacheSqlLimit");
+
+        this.migrationPath = Config.get(section, "flyway_location");
+    }
+
+    public void load () {
+        this.load(SECTION_NAME);
     }
 
     public String getHost () {
@@ -76,6 +85,10 @@ public class MySQLConfig {
 
     public int getPrepStmtCacheSqlLimit() {
         return prepStmtCacheSqlLimit;
+    }
+
+    public String getFlywayLocation () {
+        return this.migrationPath;
     }
 
 }

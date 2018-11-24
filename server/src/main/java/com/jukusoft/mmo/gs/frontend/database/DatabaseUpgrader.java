@@ -40,11 +40,22 @@ public class DatabaseUpgrader {
 
         this.flyway.setPlaceholders(placeholderMap);
 
+        //set location
+        this.flyway.setLocations(mySQLConfig.getFlywayLocation());
+
         //set encoding
         this.flyway.setEncoding("utf-8");
     }
 
+    public void setClasspathLocation (String loc) {
+        this.flyway.setLocations(loc);
+    }
+
     public void migrate () {
+        for (String loc : this.flyway.getLocations()) {
+            System.err.println("location: " + loc);
+        }
+
         //create or upgrade database schema
         this.flyway.migrate();
 
