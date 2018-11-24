@@ -7,6 +7,8 @@ services:
 before_install:
   - mysql -e 'DROP DATABASE IF EXISTS my_test_database;'
   - mysql -e 'CREATE DATABASE IF NOT EXISTS my_test_database;'
+  - mysql -e 'DROP DATABASE IF EXISTS my_test_database2;'
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS my_test_database2;'
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
