@@ -31,4 +31,20 @@ public class ConfigLoaderTest {
         Config.clear();
     }
 
+    @Test (expected = IllegalArgumentException.class)
+    public void testLoadWithInvalideParamsWithoutSection () throws IOException {
+        ConfigLoader.load("../config/", new String[]{
+                "-test",
+                "-Config:key2=value3"
+        });
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testLoadWithInvalideParamsWithoutValue () throws IOException {
+        ConfigLoader.load("../config/", new String[]{
+                "-test",
+                "-Config:section1.key2"
+        });
+    }
+
 }
