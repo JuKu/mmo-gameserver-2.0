@@ -30,12 +30,44 @@ public class DatabaseFactory {
         Log.i(DATABASE_TAG, "initialize database connection...");
 
         //initialize database
-        Database.init(mySQLConfig);
+        Database.init("main", mySQLConfig);
+
+        //build second connection
+        buildStaticDB();
 
         try {
             return Database.getConnection();
         } catch (SQLException e) {
             Log.e(DATABASE_TAG, "Coulnd't get database connection: ", e);
+            System.exit(1);
+
+            return null;
+        }
+    }
+
+    protected static Connection buildStaticDB () {
+        Log.i(DATABASE_TAG, "initialize static database MySQL config...");
+
+        //load mysql config
+        MySQLConfig mySQLConfig = new MySQLConfig();
+        mySQLConfig.load("MySQLStaticData");
+
+        Log.i(DATABASE_TAG, "execute database upgrader for static db...");
+
+        //create or upgrade database schema
+        DatabaseUpgrader databaseUpgrader = new DatabaseUpgrader(mySQLConfig);
+        databaseUpgrader.migrate();
+        databaseUpgrader.printInfo(DATABASE_TAG);
+
+        Log.i(DATABASE_TAG, "initialize static database connection...");
+
+        //initialize database
+        Database.init("static", mySQLConfig);
+
+        try {
+            return Database.getConnection();
+        } catch (SQLException e) {
+            Log.e(DATABASE_TAG, "Coulnd't get static database connection: ", e);
             System.exit(1);
 
             return null;

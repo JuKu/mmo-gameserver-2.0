@@ -1,5 +1,7 @@
 package com.jukusoft.mmo.gs.frontend.database;
 
+import com.carrotsearch.hppc.ObjectObjectHashMap;
+import com.carrotsearch.hppc.ObjectObjectMap;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -16,11 +18,17 @@ public class Database {
     protected static MySQLConfig mySQLConfig = null;
     protected static HikariDataSource dataSource = null;
 
+    protected static ObjectObjectMap<String,HikariDataSource> dataSourceMap = new ObjectObjectHashMap<>();
+
     protected Database() {
         //
     }
 
     public static void init (MySQLConfig mySQLConfig) {
+        init("main", mySQLConfig);
+    }
+
+    public static void init (String name, MySQLConfig mySQLConfig) {
         Database.mySQLConfig = mySQLConfig;
 
         Log.i(LOG_TAG, "connect to mysql database: " + mySQLConfig.getJDBCUrl());
@@ -43,17 +51,37 @@ public class Database {
         config.addDataSourceProperty("cacheServerConfiguration", "true");
         config.addDataSourceProperty("maintainTimeStats", "false");
 
-        dataSource = new HikariDataSource(config);
+        if (name.equals("main")) {
+            dataSource = new HikariDataSource(config);
+        } else {
+            dataSourceMap.put(name, dataSource);
+        }
 
         Log.i(LOG_TAG, "connection established.");
     }
 
     public static HikariDataSource getDataSource () {
-        return dataSource;
+        return getDataSource("main");
+    }
+
+    public static HikariDataSource getDataSource (String name) {
+        if (name.equals("main")) {
+            return dataSource;
+        } else {
+            return dataSourceMap.get(name);
+        }
     }
 
     public static Connection getConnection () throws SQLException {
-        return dataSource.getConnection();
+        return getConnection("main");
+    }
+
+    public static Connection getConnection (String name) throws SQLException {
+        if (name.equals("main")) {
+            return dataSource.getConnection();
+        } else {
+            return dataSourceMap.get(name).getConnection();
+        }
     }
 
     public static void close () {
