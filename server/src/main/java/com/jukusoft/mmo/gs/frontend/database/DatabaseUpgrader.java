@@ -53,7 +53,7 @@ public class DatabaseUpgrader {
 
     public void migrate () {
         for (String loc : this.flyway.getLocations()) {
-            System.err.println("location: " + loc);
+            Log.v("Flyway", "flyway location: " + loc);
         }
 
         //create or upgrade database schema
