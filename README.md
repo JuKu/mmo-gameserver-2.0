@@ -13,3 +13,9 @@ Another try to build a mmo game server
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=com.jukusoft%3Ammo-gameserver-parent&metric=security_rating)](https://sonarcloud.io/dashboard/index/com.jukusoft%3Ammo-gameserver-parent) 
 
 [![Sonarcloud](https://sonarcloud.io/api/project_badges/quality_gate?project=com.jukusoft%3Ammo-gameserver-parent)](https://sonarcloud.io/dashboard?id=com.jukusoft%3Ammo-gameserver-parent)
+
+## Gameserver
+
+A gameserver can handle multiple regions.
+
+![Region Server](./docs/images/gs.png)
