@@ -77,7 +77,7 @@
 		<!-- library for high performance Real-Time and Embedded Systems, 5.4.1 -->
 		<javolution.version>6.0.0</javolution.version>
 
-		<vertx.serializer.version>1.0.5</vertx.serializer.version>
+		<vertx.serializer.version>1.0.6</vertx.serializer.version>
 
 		<shared.library.version>0.0.15-SNAPSHOT</shared.library.version>
 
