@@ -114,6 +114,7 @@ public class ServerMain {
         }
 
         //inform others in cluster that this gs server exists
+        Log.i("Cluster", "add gameserver to hazelcast serverlist for load balancing.");
         IList<String> serverList = hazelcastInstance.getList("gs-servers-list");
         final String serverFingerprint = host + ":" + port + ":" + Version.getInstance().getVersion();
         serverList.add(serverFingerprint);
