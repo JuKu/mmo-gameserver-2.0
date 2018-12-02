@@ -1,9 +1,12 @@
 package com.jukusoft.mmo.gs.frontend.network;
 
+import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
+import com.jukusoft.mmo.engine.shared.messages.JoinRegionMessage;
 import com.jukusoft.vertx.connection.clientserver.CustomClientInitializer;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import com.jukusoft.vertx.connection.stream.BufferStream;
+import com.jukusoft.vertx.serializer.Serializer;
 import com.jukusoft.vertx.serializer.utils.ByteUtils;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
@@ -48,7 +51,38 @@ public class ClientInitializer implements CustomClientInitializer {
     protected void onMessage (Buffer buffer, RemoteConnection conn) {
         Log.v(LOG_TAG, "message from proxy server received with type " + ByteUtils.byteToHex(buffer.getByte(0)) + ", extendedType: " + ByteUtils.byteToHex(buffer.getByte(1)) + ".");
 
-        //TODO: check if login message and else, check if user is authentificated (if not --> drop message)
+        byte type = buffer.getByte(0);
+        byte extendedType = buffer.getByte(1);
+
+        //check, if user is authentificated
+        if (!authentificated) {
+            //check, if message is a join message
+            if (type == 0x01 && extendedType == 0x07) {
+                //pass message
+
+                //handle message
+                JoinRegionMessage joinMessage = Serializer.unserialize(buffer);
+
+                //check cluster credentials
+                if (joinMessage.cluster_username.equals(Config.get("Cluster", "username")) && joinMessage.cluster_password.equals(Config.get("Cluster", "password"))) {
+                    //cluster credentials right
+
+                    //TODO: set user state and find region to redirect future messages
+                } else {
+                    Log.w("Auth", "cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");
+                    conn.disconnect();
+
+                    return;
+                }
+            } else {
+                //drop message, because proxy isn't authentificated
+                Log.w(LOG_TAG, "Drop message with type " + type + ", extendedType: " + extendedType + " because proxy isn't authentificated yet.");
+
+                return;
+            }
+        }
+
+        //TODO: check if login message and else, check if user is authentificated (if not --> drop message, else redirect message to region)
     }
 
 }
