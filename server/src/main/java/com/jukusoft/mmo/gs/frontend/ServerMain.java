@@ -11,6 +11,7 @@ import com.jukusoft.mmo.engine.shared.utils.Utils;
 import com.jukusoft.mmo.engine.shared.version.Version;
 import com.jukusoft.mmo.gs.frontend.database.DatabaseFactory;
 import com.jukusoft.mmo.gs.frontend.log.HzLogger;
+import com.jukusoft.mmo.gs.frontend.network.ClientInitializer;
 import com.jukusoft.mmo.gs.frontend.utils.*;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import com.jukusoft.vertx.connection.clientserver.Server;
@@ -90,6 +91,10 @@ public class ServerMain {
         //start tcp server
         TCPServer server = new TCPServer();
         server.init(vertx);
+
+        //set custom client initializer
+        server.setCustomClientInitializer(new ClientInitializer());
+
         server.setClientHandler(event -> {
             Log.i("TCPServer", "new client connection.");
         });
