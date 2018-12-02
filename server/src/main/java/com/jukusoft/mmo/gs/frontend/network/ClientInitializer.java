@@ -4,6 +4,7 @@ import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.vertx.connection.clientserver.CustomClientInitializer;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import com.jukusoft.vertx.connection.stream.BufferStream;
+import com.jukusoft.vertx.serializer.utils.ByteUtils;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 
@@ -38,7 +39,6 @@ public class ClientInitializer implements CustomClientInitializer {
         bufferStream.handler(buffer -> this.onMessage(buffer, conn));
 
         bufferStream.endHandler(v -> this.onClose(conn));
-        //conn.setCloseHandler(this::onClose);
     }
 
     protected void onClose (RemoteConnection conn) {
@@ -46,7 +46,7 @@ public class ClientInitializer implements CustomClientInitializer {
     }
 
     protected void onMessage (Buffer buffer, RemoteConnection conn) {
-        Log.v(LOG_TAG, "message from proxy server received.");
+        Log.v(LOG_TAG, "message from proxy server received with type " + ByteUtils.byteToHex(buffer.getByte(0)) + ", extendedType: " + ByteUtils.byteToHex(buffer.getByte(1)) + ".");
 
         //TODO: check if login message and else, check if user is authentificated (if not --> drop message)
     }
