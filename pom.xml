@@ -11,6 +11,7 @@
 
 	<modules>
 		<module>server</module>
+		<module>region</module>
 	</modules>
 
 	<name>MMO Game Engine - Game Server</name>
