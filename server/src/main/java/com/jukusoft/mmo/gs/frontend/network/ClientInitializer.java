@@ -3,6 +3,8 @@ package com.jukusoft.mmo.gs.frontend.network;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.messages.JoinRegionMessage;
+import com.jukusoft.mmo.gs.region.RegionContainer;
+import com.jukusoft.mmo.gs.region.RegionManager;
 import com.jukusoft.vertx.connection.clientserver.CustomClientInitializer;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import com.jukusoft.vertx.connection.stream.BufferStream;
@@ -24,11 +26,17 @@ public class ClientInitializer implements CustomClientInitializer {
     protected RemoteConnection conn = null;
     protected ConnState state = new ConnState();
 
+    protected final RegionManager regionManager;
+
+    protected RegionContainer regionContainer = null;
+
     /**
     * default constructor
+     *
+     * @param regionManager singleton instance of region manager
     */
-    public ClientInitializer () {
-        //
+    public ClientInitializer (RegionManager regionManager) {
+        this.regionManager = regionManager;
     }
 
     @Override
@@ -74,11 +82,20 @@ public class ClientInitializer implements CustomClientInitializer {
                     state.setRegion(joinMessage.regionID, joinMessage.instanceID, joinMessage.cid);
                     Log.i(AUTH_TAG, "proxy connection (" + conn.remoteHost() + ":" + conn.remotePort() + ") authentificated successfully!");
 
-                    //TODO: find region to redirect future messages
+                    //find region to redirect future messages
+                    this.regionContainer = this.regionManager.find(joinMessage.regionID, joinMessage.instanceID, joinMessage.shardID);
+
+                    if (this.regionContainer == null) {
+                        Log.w(LOG_TAG, "region (" + joinMessage.regionID + "-" + joinMessage.instanceID + "-" + joinMessage.shardID + ") doesn't run on this server!");
+
+                        //TODO: send error message to client
+
+                        return;
+                    }
 
                     this.authentificated = true;
 
-                    //TODO: send response to proxy
+                    //TODO: send response to proxy / client
                 } else {
                     Log.w(AUTH_TAG, "cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");
                     conn.disconnect();

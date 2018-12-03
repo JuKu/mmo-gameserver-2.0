@@ -9,16 +9,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>mmo-gameserver-region</artifactId>
-
-	<dependencies>
-		<!-- region api -->
-		<dependency>
-			<groupId>com.jukusoft</groupId>
-			<artifactId>mmo-gameserver-regionapi</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
+	<artifactId>mmo-gameserver-regionapi</artifactId>
 
 
 </project>

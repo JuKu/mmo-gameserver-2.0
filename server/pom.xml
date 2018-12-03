@@ -12,6 +12,13 @@
 	<artifactId>mmo-gameserver-server</artifactId>
 
 	<dependencies>
+		<!-- region api -->
+		<dependency>
+			<groupId>com.jukusoft</groupId>
+			<artifactId>mmo-gameserver-regionapi</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.jukusoft</groupId>
 			<artifactId>vertx-binary-serializer</artifactId>
