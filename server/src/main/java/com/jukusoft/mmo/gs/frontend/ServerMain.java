@@ -13,11 +13,7 @@ import com.jukusoft.mmo.gs.frontend.database.DatabaseFactory;
 import com.jukusoft.mmo.gs.frontend.log.HzLogger;
 import com.jukusoft.mmo.gs.frontend.network.ClientInitializer;
 import com.jukusoft.mmo.gs.frontend.utils.*;
-import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
-import com.jukusoft.vertx.connection.clientserver.Server;
 import com.jukusoft.vertx.connection.clientserver.TCPServer;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 
 import java.io.File;
