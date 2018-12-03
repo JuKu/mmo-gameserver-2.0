@@ -16,11 +16,13 @@ import java.util.Objects;
 public class ClientInitializer implements CustomClientInitializer {
 
     protected static final String LOG_TAG = "ClientInit";
+    protected static final String AUTH_TAG = "Auth";
 
     //authentification state (if proxy has send cluster password to check if it is allowed to connect to gameserver)
     protected boolean authentificated = false;
 
     protected RemoteConnection conn = null;
+    protected ConnState state = new ConnState();
 
     /**
     * default constructor
@@ -67,9 +69,18 @@ public class ClientInitializer implements CustomClientInitializer {
                 if (joinMessage.cluster_username.equals(Config.get("Cluster", "username")) && joinMessage.cluster_password.equals(Config.get("Cluster", "password"))) {
                     //cluster credentials right
 
-                    //TODO: set user state and find region to redirect future messages
+                    //set user state
+                    state.setAuthorized(joinMessage.userID, joinMessage.username, joinMessage.cid, joinMessage.listGroups());
+                    state.setRegion(joinMessage.regionID, joinMessage.instanceID, joinMessage.cid);
+                    Log.i(AUTH_TAG, "proxy connection (" + conn.remoteHost() + ":" + conn.remotePort() + ") authentificated successfully!");
+
+                    //TODO: find region to redirect future messages
+
+                    this.authentificated = true;
+
+                    //TODO: send response to proxy
                 } else {
-                    Log.w("Auth", "cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");
+                    Log.w(AUTH_TAG, "cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");
                     conn.disconnect();
 
                     return;
