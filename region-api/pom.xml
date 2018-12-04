@@ -11,5 +11,27 @@
 
 	<artifactId>mmo-gameserver-regionapi</artifactId>
 
+	<dependencies>
+		<dependency>
+			<groupId>com.jukusoft</groupId>
+			<artifactId>vertx-binary-serializer</artifactId>
+			<version>${vertx.serializer.version}</version>
+		</dependency>
+
+		<!-- If you want to use TCPServer and TCPClient, you need also this dependency -->
+		<dependency>
+			<groupId>com.jukusoft</groupId>
+			<artifactId>vertx-binary-serializer-connection</artifactId>
+			<version>${vertx.serializer.version}</version>
+		</dependency>
+
+		<!-- shared classes from mmo-engine-client -->
+		<dependency>
+			<groupId>com.jukusoft</groupId>
+			<artifactId>shared-commons-library</artifactId>
+			<version>${shared.library.version}</version>
+		</dependency>
+	</dependencies>
+
 
 </project>
