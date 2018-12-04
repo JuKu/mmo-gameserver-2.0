@@ -12,6 +12,7 @@ import io.vertx.ext.sql.SQLClient;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class Database {
@@ -50,6 +51,16 @@ public class Database {
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "" + mySQLConfig.getPrepStmtCacheSqlLimit());
 
         config.addDataSourceProperty("useServerPrepStmts", "true");//Newer versions of MySQL support server-side prepared statements, this can provide a substantial performance boost. Set this property to true.
+
+        //set max pool size
+        config.setMaximumPoolSize(mySQLConfig.getMaxPoolSize());
+
+        // We will wait for 15 seconds to get a connection from the pool.
+        // Default is 30, but it shouldn't be taking that long.
+        config.setConnectionTimeout(mySQLConfig.getConnectionTimeout());
+
+        // If a connection is not returned within 10 seconds, it's probably safe to assume it's been leaked.
+        config.setLeakDetectionThreshold(mySQLConfig.getLeakDetectionThreshold());
 
         //recommended default configuration, see https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration
         config.addDataSourceProperty("useLocalSessionState", "true");

@@ -53,6 +53,9 @@ public class MySQLConfigTest {
         assertEquals(true, mySQLConfig.getJDBCUrl().startsWith("jdbc:mysql://"));
         assertEquals(250, mySQLConfig.getPrepStmtCacheSize());
         assertEquals(2048, mySQLConfig.getPrepStmtCacheSqlLimit());
+
+        assertEquals(5000, mySQLConfig.getConnectionTimeout());
+        assertEquals(10000, mySQLConfig.getLeakDetectionThreshold());
     }
 
     @Test

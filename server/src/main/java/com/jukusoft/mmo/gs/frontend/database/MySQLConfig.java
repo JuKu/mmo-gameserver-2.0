@@ -17,6 +17,9 @@ public class MySQLConfig {
     protected int prepStmtCacheSize = 250;
     protected int prepStmtCacheSqlLimit = 2048;
 
+    protected int connectionTimeout = 0;
+    protected int leakDetectionThreshold = 0;
+
     //for database upgrader
     protected String migrationPath = "classpath:db/migration";
 
@@ -35,6 +38,9 @@ public class MySQLConfig {
         this.maxPoolSize = Config.getInt(section, "max_pool_size");
         this.prepStmtCacheSize = Config.getInt(section, "prepStmtCacheSize");
         this.prepStmtCacheSqlLimit = Config.getInt(section, "prepStmtCacheSqlLimit");
+
+        this.connectionTimeout = Config.getInt(section, "connectionTimeout");
+        this.leakDetectionThreshold = Config.getInt(section, "leakDetectionThreshold");
 
         this.migrationPath = Config.get(section, "flyway_location");
     }
@@ -73,6 +79,14 @@ public class MySQLConfig {
 
     public int getMaxPoolSize () {
         return this.maxPoolSize;
+    }
+
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public int getLeakDetectionThreshold() {
+        return leakDetectionThreshold;
     }
 
     public String getJDBCUrl () {
