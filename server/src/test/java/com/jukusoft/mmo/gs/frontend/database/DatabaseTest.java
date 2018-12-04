@@ -1,6 +1,7 @@
 package com.jukusoft.mmo.gs.frontend.database;
 
 import com.jukusoft.mmo.engine.shared.config.Config;
+import io.vertx.core.Vertx;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,16 +15,22 @@ import static org.junit.Assert.assertNotNull;
 
 public class DatabaseTest {
 
+    protected static Vertx vertx = null;
+
     @BeforeClass
     public static void beforeClass () {
         //clear in-memory config first
         Config.clear();
+
+        vertx = Vertx.vertx();
     }
 
     @AfterClass
     public static void afterClass () {
         //clear in-memory config first
         Config.clear();
+
+        vertx.close();
     }
 
     @Test
@@ -37,7 +44,7 @@ public class DatabaseTest {
         MySQLConfig mySQLConfig = createConfig();
 
         //initialize database
-        Database.init(mySQLConfig);
+        Database.init(vertx, mySQLConfig);
 
         assertNotNull(Database.getDataSource());
         assertNotNull(Database.getConnection());
@@ -52,7 +59,7 @@ public class DatabaseTest {
         MySQLConfig mySQLConfig = createConfig();
 
         //initialize database
-        Database.init("static", mySQLConfig);
+        Database.init("static", vertx, mySQLConfig);
 
         assertNotNull(Database.getDataSource("static"));
         assertNotNull(Database.getConnection("static"));
@@ -67,7 +74,7 @@ public class DatabaseTest {
         MySQLConfig mySQLConfig = createConfig();
 
         //initialize database
-        Database.init(mySQLConfig);
+        Database.init(vertx, mySQLConfig);
 
         String query = Database.replacePrefix("SELECT * FROM `{prefix}users`; ");
         assertEquals("SELECT * FROM `mmo_users`; ", query);

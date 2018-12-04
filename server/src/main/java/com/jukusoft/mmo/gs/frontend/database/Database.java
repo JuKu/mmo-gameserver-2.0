@@ -6,6 +6,9 @@ import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.vertx.core.Vertx;
+import io.vertx.ext.jdbc.JDBCClient;
+import io.vertx.ext.sql.SQLClient;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,6 +22,8 @@ public class Database {
 
     protected static MySQLConfig mySQLConfig = null;
     protected static HikariDataSource dataSource = null;
+    protected static SQLClient mainClient = null;
+    protected static ObjectObjectMap<String,SQLClient> clients = new ObjectObjectHashMap<>();
 
     protected static ObjectObjectMap<String,HikariDataSource> dataSourceMap = new ObjectObjectHashMap<>();
 
@@ -26,11 +31,11 @@ public class Database {
         //
     }
 
-    public static void init (MySQLConfig mySQLConfig) {
-        init("main", mySQLConfig);
+    public static void init (Vertx vertx, MySQLConfig mySQLConfig) {
+        init("main", vertx, mySQLConfig);
     }
 
-    public static void init (String name, MySQLConfig mySQLConfig) {
+    public static void init (String name, Vertx vertx, MySQLConfig mySQLConfig) {
         Database.mySQLConfig = mySQLConfig;
 
         Log.i(LOG_TAG, "connect to mysql database: " + mySQLConfig.getJDBCUrl());
@@ -55,8 +60,11 @@ public class Database {
 
         if (name.equals("main")) {
             dataSource = new HikariDataSource(config);
+            mainClient = JDBCClient.create(vertx, dataSource);
         } else {
-            dataSourceMap.put(name, dataSource);
+            HikariDataSource dataSource1 = new HikariDataSource(config);
+            dataSourceMap.put(name, dataSource1);
+            clients.put(name, JDBCClient.create(vertx, dataSource1));
         }
 
         Log.i(LOG_TAG, "connection established.");

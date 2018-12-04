@@ -5,6 +5,7 @@ import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.messages.JoinRegionMessage;
 import com.jukusoft.mmo.gs.region.RegionContainer;
 import com.jukusoft.mmo.gs.region.RegionManager;
+import com.jukusoft.mmo.gs.region.user.User;
 import com.jukusoft.vertx.connection.clientserver.CustomClientInitializer;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import com.jukusoft.vertx.connection.stream.BufferStream;
@@ -36,6 +37,7 @@ public class ClientInitializer implements CustomClientInitializer {
      * @param regionManager singleton instance of region manager
     */
     public ClientInitializer (RegionManager regionManager) {
+        Objects.requireNonNull(regionManager);
         this.regionManager = regionManager;
     }
 
@@ -98,6 +100,8 @@ public class ClientInitializer implements CustomClientInitializer {
                     }
 
                     //TODO: initialize player on container
+                    User user = new User(joinMessage.userID, joinMessage.username, joinMessage.listGroups());
+                    this.regionContainer.initPlayer(user, joinMessage.cid);
 
                     this.authentificated = true;
 

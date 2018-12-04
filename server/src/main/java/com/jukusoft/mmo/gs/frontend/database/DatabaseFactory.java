@@ -1,6 +1,7 @@
 package com.jukusoft.mmo.gs.frontend.database;
 
 import com.jukusoft.mmo.engine.shared.logger.Log;
+import io.vertx.core.Vertx;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,7 +14,7 @@ public class DatabaseFactory {
         //
     }
 
-    public static Connection build () {
+    public static Connection build (Vertx vertx) {
         Log.i(DATABASE_TAG, "initialize MySQL config...");
 
         //load mysql config
@@ -30,10 +31,10 @@ public class DatabaseFactory {
         Log.i(DATABASE_TAG, "initialize database connection...");
 
         //initialize database
-        Database.init("main", mySQLConfig);
+        Database.init("main", vertx, mySQLConfig);
 
         //build second connection
-        buildStaticDB();
+        buildStaticDB(vertx);
 
         try {
             return Database.getConnection();
@@ -45,7 +46,7 @@ public class DatabaseFactory {
         }
     }
 
-    protected static Connection buildStaticDB () {
+    protected static Connection buildStaticDB (Vertx vertx) {
         Log.i(DATABASE_TAG, "initialize static database MySQL config...");
 
         //load mysql config
@@ -62,7 +63,7 @@ public class DatabaseFactory {
         Log.i(DATABASE_TAG, "initialize static database connection...");
 
         //initialize database
-        Database.init("static", mySQLConfig);
+        Database.init("static", vertx, mySQLConfig);
 
         try {
             return Database.getConnection();

@@ -13,6 +13,8 @@ import com.jukusoft.mmo.gs.frontend.database.DatabaseFactory;
 import com.jukusoft.mmo.gs.frontend.log.HzLogger;
 import com.jukusoft.mmo.gs.frontend.network.ClientInitializer;
 import com.jukusoft.mmo.gs.frontend.utils.*;
+import com.jukusoft.mmo.gs.region.RegionManager;
+import com.jukusoft.mmo.gs.region.RegionManagerImpl;
 import com.jukusoft.vertx.connection.clientserver.TCPServer;
 import io.vertx.core.Vertx;
 
@@ -68,14 +70,14 @@ public class ServerMain {
         HzLogger hzLogger = new HzLogger(hazelcastInstance);
         LogWriter.attachListener(hzLogger);
 
-        //initialize database connection
-        DatabaseFactory.build();
-
         //create vert.x instance
         Log.i("Vertx", "Create vertx.io instance...");
         VertxManager vertxManager = new VertxManager();
         vertxManager.init(hazelcastInstance);
         Vertx vertx = vertxManager.getVertx();
+
+        //initialize database connection
+        DatabaseFactory.build(vertx);
 
         //get host (interface) and port from config
         String host = Config.get(SECTION_NAME, "host");
@@ -88,8 +90,10 @@ public class ServerMain {
         TCPServer server = new TCPServer();
         server.init(vertx);
 
+        RegionManager regionManager = new RegionManagerImpl();
+
         //set custom client initializer
-        server.setCustomClientInitializer(new ClientInitializer());
+        server.setCustomClientInitializer(new ClientInitializer(regionManager));
 
         server.setClientHandler(event -> {
             Log.i("TCPServer", "new client connection.");
