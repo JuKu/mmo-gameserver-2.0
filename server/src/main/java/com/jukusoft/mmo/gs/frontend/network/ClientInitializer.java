@@ -90,8 +90,14 @@ public class ClientInitializer implements CustomClientInitializer {
 
                         //TODO: send error message to client
 
+                        //TODO: maybe, remove this line later
+                        //close connection
+                        this.conn.disconnect();
+
                         return;
                     }
+
+                    //TODO: initialize player on container
 
                     this.authentificated = true;
 
@@ -108,9 +114,10 @@ public class ClientInitializer implements CustomClientInitializer {
 
                 return;
             }
+        } else {
+            //redirect message to region
+            this.regionContainer.receive(buffer, conn);
         }
-
-        //TODO: check if login message and else, check if user is authentificated (if not --> drop message, else redirect message to region)
     }
 
 }
