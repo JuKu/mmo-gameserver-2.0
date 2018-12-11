@@ -118,10 +118,12 @@ public class ServerMain {
             Thread.sleep(100);
         }
 
+        String ip = Config.get("GameServer", "ip");
+
         //inform others in cluster that this gs server exists
         Log.i("Cluster", "add gameserver to hazelcast serverlist for load balancing.");
         IList<String> serverList = hazelcastInstance.getList("gs-servers-list");
-        final String serverFingerprint = host + ":" + port + ":" + Version.getInstance().getVersion();
+        final String serverFingerprint = ip + ":" + port + ":" + Version.getInstance().getVersion();
         serverList.add(serverFingerprint);
 
         //show console prompt and wait
