@@ -72,6 +72,8 @@ public class ClientInitializer implements CustomClientInitializer {
             if (type == 0x01 && extendedType == 0x07) {
                 //pass message
 
+                Log.i(LOG_TAG, "auth (join) message from proxy server received.");
+
                 //handle message
                 JoinRegionMessage joinMessage = Serializer.unserialize(buffer);
 
