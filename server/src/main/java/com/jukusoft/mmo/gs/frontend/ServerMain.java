@@ -13,10 +13,14 @@ import com.jukusoft.mmo.gs.frontend.database.DatabaseFactory;
 import com.jukusoft.mmo.gs.frontend.log.HzLogger;
 import com.jukusoft.mmo.gs.frontend.network.ClientInitializer;
 import com.jukusoft.mmo.gs.frontend.utils.*;
+import com.jukusoft.mmo.gs.region.RegionContainer;
 import com.jukusoft.mmo.gs.region.RegionManager;
 import com.jukusoft.mmo.gs.region.RegionManagerImpl;
 import com.jukusoft.vertx.connection.clientserver.TCPServer;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.Message;
+import io.vertx.core.json.JsonObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -125,6 +129,26 @@ public class ServerMain {
         IList<String> serverList = hazelcastInstance.getList("gs-servers-list");
         final String serverFingerprint = ip + ":" + port + ":" + Version.getInstance().getVersion();
         serverList.add(serverFingerprint);
+
+        vertx.eventBus().consumer("gs-start-" + ip + ":" + port, (Handler<Message<String>>) event -> {
+            Log.d("Main", "region start message received.");
+
+            JsonObject request = new JsonObject(event.body());
+            long regionID = request.getLong("regionID");
+            int instanceID = request.getInteger("instanceID");
+            int shardID = request.getInteger("shardID");
+
+            regionManager.start(regionID, instanceID, shardID, new Handler<RegionContainer>() {
+                @Override
+                public void handle(RegionContainer event1) {
+                    if (event1 != null) {
+                        event.reply("success");
+                    } else {
+                        event.fail(500, "Couldn't start region!");
+                    }
+                }
+            });
+        });
 
         //show console prompt and wait
         ConsoleWaiter.execute();
