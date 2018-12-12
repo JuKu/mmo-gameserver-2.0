@@ -138,14 +138,11 @@ public class ServerMain {
             int instanceID = request.getInteger("instanceID");
             int shardID = request.getInteger("shardID");
 
-            regionManager.start(regionID, instanceID, shardID, new Handler<RegionContainer>() {
-                @Override
-                public void handle(RegionContainer event1) {
-                    if (event1 != null) {
-                        event.reply("success");
-                    } else {
-                        event.fail(500, "Couldn't start region!");
-                    }
+            regionManager.start(regionID, instanceID, shardID, event1 -> {
+                if (event1 != null) {
+                    event.reply("success");
+                } else {
+                    event.fail(500, "Couldn't start region!");
                 }
             });
         });
