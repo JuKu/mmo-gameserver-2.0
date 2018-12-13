@@ -9,7 +9,7 @@ public class RegionCoordUtilsTest {
 
     @Test
     public void testConstructor () {
-        new RegionCoordUtilsTest();
+        new RegionCoordUtils();
     }
 
     @Test
