@@ -24,12 +24,12 @@ public class RegionContainerImpl implements RegionContainer {
 
     @Override
     public void initPlayer(User user, int cid) {
-
+        //
     }
 
     @Override
     public void receive(Buffer buffer, RemoteConnection conn) {
-
+        throw new UnsupportedOperationException("method isn't implemented yet.");
     }
 
 }

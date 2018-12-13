@@ -101,7 +101,7 @@ public class ClientInitializer implements CustomClientInitializer {
                         return;
                     }
 
-                    //TODO: initialize player on container
+                    //initialize player on container
                     User user = new User(joinMessage.userID, joinMessage.username, joinMessage.listGroups());
                     this.regionContainer.initPlayer(user, joinMessage.cid);
 
