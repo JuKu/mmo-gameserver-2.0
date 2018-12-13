@@ -11,7 +11,6 @@ import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import com.jukusoft.vertx.connection.stream.BufferStream;
 import com.jukusoft.vertx.serializer.Serializer;
 import com.jukusoft.vertx.serializer.utils.ByteUtils;
-import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 
 import java.util.Objects;
