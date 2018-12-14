@@ -97,7 +97,7 @@ public class ClientInitializer implements CustomClientInitializer {
                         //close connection
                         this.conn.disconnect();
 
-                        return;
+                        throw new IllegalStateException("region (" + joinMessage.regionID + "-" + joinMessage.instanceID + "-" + joinMessage.shardID + ") doesn't run on this server!");
                     }
 
                     //initialize player on container

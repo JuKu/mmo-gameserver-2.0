@@ -3,6 +3,7 @@ package com.jukusoft.mmo.gs.frontend.network;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.messages.JoinRegionMessage;
 import com.jukusoft.mmo.gs.region.RegionContainer;
+import com.jukusoft.mmo.gs.region.RegionContainerImpl;
 import com.jukusoft.mmo.gs.region.RegionManager;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import com.jukusoft.vertx.connection.stream.BufferStream;
@@ -20,11 +21,11 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.*;
 
 public class ClientInitializerTest {
 
@@ -84,6 +85,36 @@ public class ClientInitializerTest {
         initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
     }
 
+    @Test (expected = UnauthentificatedException.class)
+    public void testOnUnauthentificatedMessage1 () {
+        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+
+        //test internal state
+        assertEquals(false, initializer.authentificated);
+
+        //create example message
+        Buffer buffer = Buffer.buffer();
+        buffer.appendByte((byte) 0x02);
+        buffer.appendByte((byte) 0x03);
+
+        initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
+    }
+
+    @Test (expected = UnauthentificatedException.class)
+    public void testOnUnauthentificatedMessage2 () {
+        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+
+        //test internal state
+        assertEquals(false, initializer.authentificated);
+
+        //create example message
+        Buffer buffer = Buffer.buffer();
+        buffer.appendByte((byte) 0x02);
+        buffer.appendByte((byte) 0x07);
+
+        initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
+    }
+
     @Test
     public void testOnMessageRedirect () {
         ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
@@ -121,6 +152,36 @@ public class ClientInitializerTest {
         JoinRegionMessage msg = new JoinRegionMessage();
         msg.cluster_username = "test";
         msg.cluster_password = "testpass";
+        Buffer buffer = Serializer.serialize(msg);
+
+        initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
+    }
+
+    @Test
+    public void testHandleJoinMessageWithCorrectCredentials () {
+        RegionManager regionManager = Mockito.mock(RegionManager.class);
+        Mockito.when(regionManager.find(anyLong(), anyInt(), anyInt())).thenReturn(new RegionContainerImpl(1, 2, 3));
+
+        ClientInitializer initializer = new ClientInitializer(regionManager);
+
+        JoinRegionMessage msg = new JoinRegionMessage();
+        msg.cluster_username = "dev";
+        msg.cluster_password = "dev-pass";
+        msg.userID = 1;
+        msg.username = "testuser";
+        msg.setGroups(new ArrayList<>());
+        Buffer buffer = Serializer.serialize(msg);
+
+        initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
+    }
+
+    @Test (expected = IllegalStateException.class)
+    public void testHandleJoinMessageWithCorrectCredentialsRegionNotRunning () {
+        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+
+        JoinRegionMessage msg = new JoinRegionMessage();
+        msg.cluster_username = "dev";
+        msg.cluster_password = "dev-pass";
         Buffer buffer = Serializer.serialize(msg);
 
         initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
