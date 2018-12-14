@@ -20,6 +20,7 @@ config/hazelcast.cfg
 !*hazelcast-example.cfg
 config/ldap.cfg
 config/mysql.cfg
+config/ftp.cfg
 
 *.jfr
 
