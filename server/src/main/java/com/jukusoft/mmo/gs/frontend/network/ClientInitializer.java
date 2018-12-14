@@ -111,13 +111,13 @@ public class ClientInitializer implements CustomClientInitializer {
                     Log.w(AUTH_TAG, "cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");
                     conn.disconnect();
 
-                    return;
+                    throw new WrongClusterCredentialsException("cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");
                 }
             } else {
                 //drop message, because proxy isn't authentificated
                 Log.w(LOG_TAG, "Drop message with type " + type + ", extendedType: " + extendedType + " because proxy isn't authentificated yet.");
 
-                return;
+                throw new UnauthentificatedException("Drop message with type " + type + ", extendedType: " + extendedType + " because proxy isn't authentificated yet.");
             }
         } else {
             //redirect message to region
