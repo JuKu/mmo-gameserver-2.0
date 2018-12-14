@@ -20,6 +20,8 @@ import com.jukusoft.mmo.gs.region.RegionManager;
 import com.jukusoft.mmo.gs.region.RegionManagerImpl;
 import com.jukusoft.mmo.gs.region.ftp.FTPFactory;
 import com.jukusoft.vertx.connection.clientserver.TCPServer;
+import io.github.bckfnn.ftp.FtpClient;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.Message;
@@ -36,12 +38,22 @@ public class ServerMain {
 
     protected static final String HAZELCAST_TAG = "Hazelcast";
     protected static final String CACHE_TAG = "Cache";
+    protected static final String FTP_TAG = "FTP";
     protected static final String SECTION_NAME = "GameServer";
 
     public static void main (String[] args) {
         try {
             start(args);
         } catch (Exception e) {
+            Log.shutdown();
+
+            //wait 3 seconds so log writer can write and flush all log entries into file
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e1) {
+                //don't do anything here
+            }
+
             e.printStackTrace();
             System.exit(0);
         }
@@ -98,6 +110,21 @@ public class ServerMain {
 
         //check ftp connection
         FTPFactory.init(vertx);
+
+        //check ftp connection
+        Log.i(FTP_TAG, "check ftp connection...");
+        FtpClient ftpClient = FTPFactory.createSync();
+
+        if (ftpClient == null) {
+            throw new IllegalStateException("Coulnd't connect and login on ftp server...");
+        } else {
+            Log.i(FTP_TAG, "connection to ftp server was successfully!");
+
+            //close ftp connection now, because we don't need it yet
+            ftpClient.quit(event -> {
+                //don't do anything here
+            });
+        }
 
         //get host (interface) and port from config
         String host = Config.get(SECTION_NAME, "host");
