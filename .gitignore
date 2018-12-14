@@ -22,6 +22,9 @@ config/ldap.cfg
 config/mysql.cfg
 config/ftp.cfg
 
+cache/
+*cache
+
 *.jfr
 
 *.pentaquin
