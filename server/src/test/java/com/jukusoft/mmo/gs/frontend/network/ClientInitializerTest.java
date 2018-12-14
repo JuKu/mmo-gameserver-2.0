@@ -157,12 +157,55 @@ public class ClientInitializerTest {
         initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
     }
 
+    @Test (expected = WrongClusterCredentialsException.class)
+    public void testHandleJoinMessageWithWrongClusterUser () {
+        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+
+        JoinRegionMessage msg = new JoinRegionMessage();
+        msg.cluster_username = "test";
+        msg.cluster_password = "dev-pass";
+        Buffer buffer = Serializer.serialize(msg);
+
+        initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
+    }
+
+    @Test (expected = WrongClusterCredentialsException.class)
+    public void testHandleJoinMessageWithWrongClusterPassword () {
+        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+
+        JoinRegionMessage msg = new JoinRegionMessage();
+        msg.cluster_username = "dev";
+        msg.cluster_password = "testpass";
+        Buffer buffer = Serializer.serialize(msg);
+
+        initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
+    }
+
     @Test
     public void testHandleJoinMessageWithCorrectCredentials () {
         RegionManager regionManager = Mockito.mock(RegionManager.class);
         Mockito.when(regionManager.find(anyLong(), anyInt(), anyInt())).thenReturn(new RegionContainerImpl(1, 2, 3));
 
         ClientInitializer initializer = new ClientInitializer(regionManager);
+
+        JoinRegionMessage msg = new JoinRegionMessage();
+        msg.cluster_username = "dev";
+        msg.cluster_password = "dev-pass";
+        msg.userID = 1;
+        msg.username = "testuser";
+        msg.setGroups(new ArrayList<>());
+        Buffer buffer = Serializer.serialize(msg);
+
+        initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
+    }
+
+    @Test (expected = IllegalStateException.class)
+    public void testHandleJoinMessageWithCorrectCredentialsNullContainer () {
+        RegionManager regionManager = Mockito.mock(RegionManager.class);
+        Mockito.when(regionManager.find(anyLong(), anyInt(), anyInt())).thenReturn(null);
+
+        ClientInitializer initializer = new ClientInitializer(regionManager);
+        initializer.conn = Mockito.mock(RemoteConnection.class);
 
         JoinRegionMessage msg = new JoinRegionMessage();
         msg.cluster_username = "dev";
