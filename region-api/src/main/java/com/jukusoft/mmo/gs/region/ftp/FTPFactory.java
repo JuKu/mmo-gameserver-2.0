@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class FTPFactory {
 
     protected static final String LOG_TAG = "FTP";
-    protected static final String CONFIG_SECTION = "Cache";
+    protected static final String CONFIG_SECTION = "FTP";
 
     protected static Vertx vertx = null;
 
