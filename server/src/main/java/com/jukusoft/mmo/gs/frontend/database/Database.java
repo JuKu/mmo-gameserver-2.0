@@ -69,6 +69,8 @@ public class Database {
         config.addDataSourceProperty("cacheServerConfiguration", "true");
         config.addDataSourceProperty("maintainTimeStats", "false");
 
+        config.addDataSourceProperty("logSlowQueries", mySQLConfig.getLogSlowQueries());
+
         if (name.equals("main")) {
             dataSource = new HikariDataSource(config);
             mainClient = JDBCClient.create(vertx, dataSource);

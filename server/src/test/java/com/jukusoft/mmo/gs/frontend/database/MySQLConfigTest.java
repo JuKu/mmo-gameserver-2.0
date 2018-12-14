@@ -56,6 +56,8 @@ public class MySQLConfigTest {
 
         assertEquals(5000, mySQLConfig.getConnectionTimeout());
         assertEquals(10000, mySQLConfig.getLeakDetectionThreshold());
+        assertEquals("true", mySQLConfig.getLogSlowQueries());
+        assertEquals("true", mySQLConfig.getDumpQueriesOnException());
     }
 
     @Test

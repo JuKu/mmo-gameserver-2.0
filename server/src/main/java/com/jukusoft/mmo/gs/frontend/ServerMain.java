@@ -80,6 +80,8 @@ public class ServerMain {
         Utils.printSection("Configuration & Init");
         ConfigLoader.load("./config/", args);
 
+        System.setProperty("org.slf4j.simpleLogger.log.com.zaxxer.hikari", Config.get("HikariPoolLogger", "level"));
+
         //initialize cache
         Log.i(CACHE_TAG, "initialize cache...");
         Cache.init(Config.get("Cache", "path"));
