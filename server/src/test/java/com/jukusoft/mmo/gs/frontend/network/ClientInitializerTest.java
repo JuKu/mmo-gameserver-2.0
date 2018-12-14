@@ -15,9 +15,16 @@ import io.vertx.core.streams.WriteStream;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
 
 public class ClientInitializerTest {
 
@@ -75,6 +82,36 @@ public class ClientInitializerTest {
         buffer.appendByte((byte) 0x02);
 
         initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
+    }
+
+    @Test
+    public void testOnMessageRedirect () {
+        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+        initializer.authentificated = true;
+
+        AtomicBoolean b = new AtomicBoolean(false);
+
+        initializer.regionContainer = Mockito.mock(RegionContainer.class);
+        Mockito.when(initializer.regionContainer.isInitialized()).thenReturn(true);
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                b.set(true);
+                return null;
+            }
+        }).when(initializer.regionContainer).receive(any(Buffer.class), any(RemoteConnection.class));
+
+        //create example message
+        Buffer buffer = Buffer.buffer();
+        buffer.appendByte((byte) 0x01);
+        buffer.appendByte((byte) 0x02);
+
+        assertEquals(false, b.get());
+
+        initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
+
+        //check, if receive() was called, this means message was redirected
+        assertEquals(true, b.get());
     }
 
     @Test (expected = WrongClusterCredentialsException.class)
