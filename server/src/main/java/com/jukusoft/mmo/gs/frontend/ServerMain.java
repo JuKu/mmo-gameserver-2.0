@@ -4,9 +4,11 @@ import com.hazelcast.config.CacheSimpleConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
+import com.jukusoft.mmo.engine.shared.config.Cache;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.logger.LogWriter;
+import com.jukusoft.mmo.engine.shared.utils.FileUtils;
 import com.jukusoft.mmo.engine.shared.utils.Utils;
 import com.jukusoft.mmo.engine.shared.version.Version;
 import com.jukusoft.mmo.gs.frontend.database.DatabaseFactory;
@@ -32,6 +34,7 @@ import java.util.logging.Logger;
 public class ServerMain {
 
     protected static final String HAZELCAST_TAG = "Hazelcast";
+    protected static final String CACHE_TAG = "Cache";
     protected static final String SECTION_NAME = "GameServer";
 
     public static void main (String[] args) {
@@ -63,6 +66,15 @@ public class ServerMain {
         //load config
         Utils.printSection("Configuration & Init");
         ConfigLoader.load("./config/", args);
+
+        //initialize cache
+        Log.i(CACHE_TAG, "initialize cache...");
+        Cache.init(Config.get("Cache", "path"));
+        Log.i(CACHE_TAG, "cache path: " + Cache.getInstance().getPath());
+        Log.i(CACHE_TAG, "clear cache: " + Cache.getInstance().getPath());
+        FileUtils.recursiveDeleteDirectory(new File(Cache.getInstance().getPath()), false);
+        new File(Cache.getInstance().getPath() + ".keep").createNewFile();
+        Cache.getInstance().createDirIfAbsent("regions");
 
         //initialize hazelcast
         Log.i(HAZELCAST_TAG, "create new hazelcast instance...");
