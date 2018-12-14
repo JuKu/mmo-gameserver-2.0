@@ -18,7 +18,7 @@ public class RegionManagerImpl implements RegionManager {
 
     @Override
     public RegionContainer find(long regionID, int instanceID, int shardID) {
-        return null;
+        return this.regionMap.get(RegionCoordUtils.hash(regionID, instanceID, shardID));
     }
 
     @Override

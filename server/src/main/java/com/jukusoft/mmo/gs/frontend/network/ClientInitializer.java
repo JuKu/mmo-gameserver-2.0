@@ -105,8 +105,6 @@ public class ClientInitializer implements CustomClientInitializer {
                     this.regionContainer.initPlayer(user, joinMessage.cid);
 
                     this.authentificated = true;
-
-                    //TODO: send response to proxy / client
                 } else {
                     Log.w(AUTH_TAG, "cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");
                     conn.disconnect();

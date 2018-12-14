@@ -24,7 +24,7 @@ public class RegionContainerImpl implements RegionContainer {
 
     @Override
     public void initPlayer(User user, int cid) {
-        //
+        //TODO: send response to proxy / client
     }
 
     @Override
