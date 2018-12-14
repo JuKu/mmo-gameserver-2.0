@@ -65,6 +65,15 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
+
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>bintray-bckfnn-maven</id>
+			<name>bintray</name>
+			<url>https://dl.bintray.com/bckfnn/maven</url>
+		</repository>
 	</repositories>
 
 	<properties>
@@ -94,6 +103,9 @@
 
 		<!-- flyway for database upgrade / migration -->
 		<flyway.version>5.0.7</flyway.version>
+
+		<!-- vertx ftp client https://groups.google.com/forum/#!topic/vertx/RDh7m9VKc2w -->
+		<ftp.client.version>0.0.2</ftp.client.version>
 
 		<maven.deploy.skip>false</maven.deploy.skip>
 

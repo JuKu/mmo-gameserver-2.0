@@ -123,6 +123,13 @@
 			<version>${flyway.version}</version>
 		</dependency>
 
+		<!-- vertx ftp client -->
+		<dependency>
+			<groupId>io.github.bckfnn</groupId>
+			<artifactId>vertx-ftp-client</artifactId>
+			<version>${ftp.client.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-nop</artifactId>
