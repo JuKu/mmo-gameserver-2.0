@@ -106,7 +106,7 @@ public class ServerMain {
         Vertx vertx = vertxManager.getVertx();
 
         //initialize database connection
-        DatabaseFactory.build(vertx);
+        DatabaseFactory.build(vertx).close();
 
         //check ftp connection
         FTPFactory.init(vertx);

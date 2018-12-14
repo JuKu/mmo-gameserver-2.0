@@ -34,7 +34,11 @@ public class DatabaseFactory {
         Database.init("main", vertx, mySQLConfig);
 
         //build second connection
-        buildStaticDB(vertx);
+        try {
+            buildStaticDB(vertx).close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         try {
             return Database.getConnection();
@@ -66,7 +70,7 @@ public class DatabaseFactory {
         Database.init("static", vertx, mySQLConfig);
 
         try {
-            return Database.getConnection();
+            return Database.getConnection("static");
         } catch (SQLException e) {
             Log.e(DATABASE_TAG, "Coulnd't get static database connection: ", e);
             System.exit(1);
