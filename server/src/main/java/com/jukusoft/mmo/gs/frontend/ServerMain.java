@@ -18,6 +18,7 @@ import com.jukusoft.mmo.gs.frontend.utils.*;
 import com.jukusoft.mmo.gs.region.RegionContainer;
 import com.jukusoft.mmo.gs.region.RegionManager;
 import com.jukusoft.mmo.gs.region.RegionManagerImpl;
+import com.jukusoft.mmo.gs.region.ftp.FTPFactory;
 import com.jukusoft.vertx.connection.clientserver.TCPServer;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -94,6 +95,9 @@ public class ServerMain {
 
         //initialize database connection
         DatabaseFactory.build(vertx);
+
+        //check ftp connection
+        FTPFactory.init(vertx);
 
         //get host (interface) and port from config
         String host = Config.get(SECTION_NAME, "host");
