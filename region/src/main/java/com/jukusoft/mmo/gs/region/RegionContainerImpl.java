@@ -5,10 +5,8 @@ import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.gs.region.ftp.FTPFactory;
 import com.jukusoft.mmo.gs.region.user.User;
-import com.jukusoft.mmo.gs.region.utils.FTPUtils;
+import com.jukusoft.mmo.gs.region.ftp.FTPUtils;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
-import io.github.bckfnn.ftp.FtpClient;
-import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 
 public class RegionContainerImpl implements RegionContainer {

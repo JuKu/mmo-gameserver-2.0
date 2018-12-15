@@ -4,7 +4,7 @@ import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.utils.Utils;
 import com.jukusoft.mmo.gs.region.ftp.FTPFactory;
-import com.jukusoft.mmo.gs.region.utils.FTPUtils;
+import com.jukusoft.mmo.gs.region.ftp.FTPUtils;
 import io.github.bckfnn.ftp.FtpClient;
 
 import java.io.BufferedReader;
