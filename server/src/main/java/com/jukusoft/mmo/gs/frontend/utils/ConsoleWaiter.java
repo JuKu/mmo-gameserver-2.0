@@ -62,6 +62,10 @@ public class ConsoleWaiter {
                 } else {
                     Log.w(LOG_TAG, "Couldn't create region with regionID " + regionID + " on ftp server!");
                 }
+
+                ftp.quit(event -> {
+                    //don't do anything here
+                });
             }
 
             System.out.println("Unsupported command: " + line);

@@ -49,7 +49,7 @@ public class MySQLConfigTest {
         assertEquals("testpass", mySQLConfig.getPassword());
         assertEquals("mmo_", mySQLConfig.getPrefix());
 
-        assertEquals(30, mySQLConfig.getMaxPoolSize());
+        assertEquals(10, mySQLConfig.getMaxPoolSize());
         assertEquals(true, mySQLConfig.getJDBCUrl().startsWith("jdbc:mysql://"));
         assertEquals(250, mySQLConfig.getPrepStmtCacheSize());
         assertEquals(2048, mySQLConfig.getPrepStmtCacheSqlLimit());
