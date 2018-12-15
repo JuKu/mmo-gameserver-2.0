@@ -52,22 +52,15 @@ public class ConsoleWaiter {
                 //open ftp connection
                 FtpClient ftp = FTPFactory.createSync();
 
-                CountDownLatch latch = new CountDownLatch(1);
+                String dir = Config.get("FTP", "regionsDir") + "/region_" + regionID + "_1";
+                boolean b1 = FTPUtils.mkdirSync(ftp, dir);
+                boolean b2 = FTPUtils.mkdirSync(ftp, dir + "/client");
+                boolean b3 = FTPUtils.mkdirSync(ftp, dir + "/server");
 
-                ftp.mkd(Config.get("FTP", "regionsDir") + "/region_" + regionID + "_1", res -> {
-                    if (res.succeeded()) {
-                        Log.i(LOG_TAG, "created region with regionID " + regionID + " on ftp server successfully!");
-                    } else {
-                        Log.w(LOG_TAG, "Couldn't create region with regionID " + regionID + " on ftp server!", res.cause());
-                    }
-
-                    latch.countDown();
-                });
-
-                try {
-                    latch.await();
-                } catch (InterruptedException e) {
-                    Log.w(LOG_TAG, "InterruptedException: ", e);
+                if (b1 && b2 && b3) {
+                    Log.i(LOG_TAG, "created region with regionID " + regionID + " on ftp server successfully!");
+                } else {
+                    Log.w(LOG_TAG, "Couldn't create region with regionID " + regionID + " on ftp server!");
                 }
             }
 
