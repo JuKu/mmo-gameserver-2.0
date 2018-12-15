@@ -15,17 +15,16 @@ import com.jukusoft.mmo.gs.frontend.database.DatabaseFactory;
 import com.jukusoft.mmo.gs.frontend.log.HzLogger;
 import com.jukusoft.mmo.gs.frontend.network.ClientInitializer;
 import com.jukusoft.mmo.gs.frontend.utils.*;
-import com.jukusoft.mmo.gs.region.RegionContainer;
 import com.jukusoft.mmo.gs.region.RegionManager;
 import com.jukusoft.mmo.gs.region.RegionManagerImpl;
 import com.jukusoft.mmo.gs.region.ftp.FTPFactory;
 import com.jukusoft.vertx.connection.clientserver.TCPServer;
 import io.github.bckfnn.ftp.FtpClient;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +79,31 @@ public class ServerMain {
         Utils.printSection("Configuration & Init");
         ConfigLoader.load("./config/", args);
 
+        //set log levels for slf4j, so FTPClient doesn't writes ftp password into log anymore
         System.setProperty("org.slf4j.simpleLogger.log.com.zaxxer.hikari", Config.get("HikariPoolLogger", "level"));
+        System.setProperty("org.slf4j.simpleLogger.log.io.github.bckfnn.ftp", "warn");
+
+        //set root logger log level
+        ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        rootLogger.setLevel(ch.qos.logback.classic.Level.WARN);
+
+        String[] logger = new String[] {
+                FtpClient.class.getName(),
+                "io.netty.resolver.dns.DnsNameResolver",
+                "io.netty.resolver.dns.DnsQueryContext",
+                "com.zaxxer.hikari.pool.HikariPool",
+                "io.netty.util.Recycler",
+                "com.zaxxer.hikari.HikariConfig",
+                "org.flywaydb.core.internal.util.scanner.classpath.ClassPathScanner",
+                "org.flywaydb.core.internal.util.FeatureDetector",
+                "org.flywaydb.core.internal.callback.SqlScriptFlywayCallback"
+        };
+
+        //set log levels to INFO to avoid sensitive information in logs
+        for (String loggerName : logger) {
+            ch.qos.logback.classic.Logger logger1 = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(loggerName);
+            logger1.setLevel(ch.qos.logback.classic.Level.INFO);
+        }
 
         //initialize cache
         Log.i(CACHE_TAG, "initialize cache...");
