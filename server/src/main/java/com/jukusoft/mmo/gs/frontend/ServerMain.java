@@ -238,6 +238,8 @@ public class ServerMain {
         //remove gs server from list
         serverList.remove(serverFingerprint);
 
+        //TODO: remove all regions from this server
+
         //check, if there are other active threads, except the main thread
         if (threadSet.size() > 1) {
             System.err.println("Shutdown: waiting for active threads:");

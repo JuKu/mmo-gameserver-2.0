@@ -4,14 +4,12 @@ import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.utils.Utils;
 import com.jukusoft.mmo.gs.region.ftp.FTPFactory;
+import com.jukusoft.mmo.gs.region.utils.FTPUtils;
 import io.github.bckfnn.ftp.FtpClient;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.concurrent.CountDownLatch;
 
 public class ConsoleWaiter {
 
