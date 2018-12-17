@@ -95,7 +95,7 @@ public class FTPUtilsTest {
         ftpClient.quit(new DummyHandler<>());
     }
 
-    @Test
+    //@Test
     public void testListFiles () throws InterruptedException {
         //create ftp connection
         FtpClient ftpClient = FTPFactory.createSync();
