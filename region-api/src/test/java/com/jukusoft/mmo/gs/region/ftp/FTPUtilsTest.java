@@ -1,11 +1,13 @@
 package com.jukusoft.mmo.gs.region.ftp;
 
 import com.jukusoft.mmo.engine.shared.config.Config;
+import com.jukusoft.mmo.engine.shared.utils.PlatformUtils;
 import com.jukusoft.mmo.gs.region.utils.DummyHandler;
 import io.github.bckfnn.ftp.FtpClient;
 import io.github.bckfnn.ftp.FtpFile;
 import io.vertx.core.Vertx;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockftpserver.fake.FakeFtpServer;
@@ -112,6 +114,16 @@ public class FTPUtilsTest {
         //fakeFtpServer.stop();
     }
 
+    @Before
+    public void windowsOnly() {
+        org.junit.Assume.assumeTrue(PlatformUtils.isWindows());
+    }
+
+    @Before
+    public void windowsOnlyAfter() {
+        //
+    }
+
     @Test
     public void testConstructor () {
         new FTPUtils();
@@ -126,7 +138,7 @@ public class FTPUtilsTest {
         ftpClient.quit(new DummyHandler<>());
     }
 
-    //@Test
+    @Test
     public void testListFiles () throws InterruptedException {
         //create ftp connection
         FtpClient ftpClient = FTPFactory.createSync();
