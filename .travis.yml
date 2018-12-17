@@ -9,6 +9,13 @@ before_install:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS my_test_database;'
   - mysql -e 'DROP DATABASE IF EXISTS my_test_database2;'
   - mysql -e 'CREATE DATABASE IF NOT EXISTS my_test_database2;'
+  - sudo apt-get install proftpd-basic -y
+  - cat /etc/proftpd/proftpd.conf
+  - cp ./junit-tests/proftpd.conf /etc/proftpd/proftpd.conf
+
+# https://wiki.debianforum.de/FTP-Server_mit_ProFTPD
+# https://docs.travis-ci.com/user/installing-dependencies/
+
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
