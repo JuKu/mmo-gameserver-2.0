@@ -46,6 +46,13 @@
 			<version>2.7.1</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- ftp client -->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>${apache.commons.net.version}</version>
+		</dependency>
 	</dependencies>
 
 

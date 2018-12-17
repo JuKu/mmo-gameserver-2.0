@@ -107,6 +107,8 @@
 		<!-- vertx ftp client https://groups.google.com/forum/#!topic/vertx/RDh7m9VKc2w -->
 		<ftp.client.version>0.0.2</ftp.client.version>
 
+		<apache.commons.net.version>3.6</apache.commons.net.version>
+
 		<maven.deploy.skip>false</maven.deploy.skip>
 
 		<!-- format maven build timestamp to add to manifest -->

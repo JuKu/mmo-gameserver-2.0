@@ -2,15 +2,11 @@ package com.jukusoft.mmo.gs.region.ftp;
 
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import io.github.bckfnn.ftp.FtpClient;
-import io.github.bckfnn.ftp.FtpFile;
 import io.vertx.core.Handler;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FTPUtils {
