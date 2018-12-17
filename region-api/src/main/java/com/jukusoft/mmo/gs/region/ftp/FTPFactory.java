@@ -34,6 +34,8 @@ public class FTPFactory {
         FtpClient client = new FtpClient(vertx, host, port);
         client.connect(connectRes -> {
             if (!connectRes.succeeded()) {
+                System.err.println("Coulnd't connect to ftp server: " + connectRes.cause());
+                connectRes.cause().printStackTrace();
                 Log.w(LOG_TAG, "Coulnd't connect to ftp server: ", connectRes.cause());
 
                 handler.handle(null);
@@ -43,6 +45,8 @@ public class FTPFactory {
 
             client.login(user, password, loginRes -> {
                 if (!loginRes.succeeded()) {
+                    System.err.println("Coulnd't login on ftp server: " + connectRes.cause());
+                    connectRes.cause().printStackTrace();
                     Log.w(LOG_TAG, "Coulnd't login on ftp server: ", connectRes.cause());
                     handler.handle(null);
                     latch.countDown();
@@ -73,6 +77,7 @@ public class FTPFactory {
         try {
             latch.await();
         } catch (InterruptedException e) {
+            e.printStackTrace();
             Log.w(LOG_TAG, "InterruptedException: ", e);
         }
 
