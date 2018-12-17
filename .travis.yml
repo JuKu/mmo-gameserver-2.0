@@ -14,7 +14,8 @@ before_install:
   - cat ./junit-tests/proftpd/passwd.txt
   - cd /etc/proftpd
   - passwd="testpass"
-  - echo $passwd | ftpasswd --stdin --passwd --name test --uid 33 --home /var/www/ftptest --shell /bin/false
+  - sudo mkdir /var/www/ftptest
+  - echo $passwd | ftpasswd --stdin --passwd --name test --uid 119 --home /var/www/ftptest --shell /bin/false
 #  - sudo ftpasswd --stdin --passwd --name test --uid 33 --home /var/www/ftptest --shell /bin/false < ./junit-tests/proftpd/passwd.txt
 #  - sudo ftpasswd --passwd --name testftp --home /var/www/ftptest --shell /bin/false
   - cat /etc/proftpd/ftpd.passwd
