@@ -6,6 +6,7 @@ import com.jukusoft.mmo.engine.shared.utils.PlatformUtils;
 import com.jukusoft.mmo.gs.region.utils.DummyHandler;
 import io.github.bckfnn.ftp.FtpClient;
 import io.github.bckfnn.ftp.FtpFile;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -21,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -174,6 +177,63 @@ public class FTPUtilsTest {
 
         assertEquals(true, counter.get() > 0);
 
+        ftpClient.quit(new DummyHandler<>());
+    }
+
+    /*@Test
+    public void testRecursiveListFiles () throws InterruptedException {
+        //create ftp connection
+        FtpClient ftpClient = FTPFactory.createSync();
+        assertNotNull(ftpClient);
+
+        String remoteDir = Config.get("FTP", "regionsDir") + "/region_1_1/";
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        List<String> dirList = new ArrayList<>();
+        List<String> fileList = new ArrayList<>();
+
+        FTPUtils.recursiveListFiles(ftpClient, remoteDir, latch, dirList, fileList, "", event -> {
+            //
+        });
+
+        latch.await(10000, TimeUnit.MILLISECONDS);
+
+        assertEquals(true, dirList.size() > 0);
+        assertEquals(true, fileList.size() > 0);
+
+        ftpClient.quit(new DummyHandler<>());
+    }*/
+
+    //@Test
+    public void testDownloadFiles () throws InterruptedException {
+        //create ftp connection
+        FtpClient ftpClient = FTPFactory.createSync();
+        assertNotNull(ftpClient);
+
+        String localDir = Cache.getInstance().getCachePath("junit-ftp-tests") + "ftp-mirror/";
+        new File(localDir).mkdirs();
+
+        String remoteDir = Config.get("FTP", "regionsDir") + "/region_1_1";
+        System.err.println("testDownloadFiles: " + remoteDir);
+
+        assertEquals(false, new File(Cache.getInstance().getCachePath("junit-ftp-tests") + "my-test.txt").exists());
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        //TODO: download files
+        FTPUtils.downloadDir(ftpClient, remoteDir, localDir, new Handler<Boolean>() {
+            @Override
+            public void handle(Boolean event) {
+                latch.countDown();
+            }
+        });
+
+        latch.await();
+
+        assertEquals(true, new File(Cache.getInstance().getCachePath("junit-ftp-tests") + "my-test.txt").exists());
+
+        //close ftp connection
         ftpClient.quit(new DummyHandler<>());
     }
 

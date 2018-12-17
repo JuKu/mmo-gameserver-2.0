@@ -50,25 +50,75 @@ public class FTPUtils {
 
     public static void downloadDir (FtpClient ftpClient, String remoteDir, String localDir, Handler<Boolean> handler) {
         //first, get a list with all files and directories on ftp server
-        ftpClient.list(remoteDir, res -> {
-            if (!res.succeeded()) {
-                Log.e(LOG_TAG, "Couldn't list directory: " + remoteDir, res.cause());
-                handler.handle(false);
-                return;
-            }
+        //
 
-            String str = res.result().toString();
-            str = str.replace("\r\n", "\n");
-            String[] lines = str.split("\n");
-
-            for (String line : lines) {
-                System.err.println("line: " + line);
-            }
-        });
+        handler.handle(true);
     }
+
+    /*public static void recursiveListFiles (FtpClient ftpClient, String remoteDir, CountDownLatch latch, Handler<List<String>> handler) throws InterruptedException {
+        recursiveListFiles(ftpClient, remoteDir, latch, new ArrayList<>(), new ArrayList<>(), "", event -> {
+            //
+        });
+    }*/
+
+    /*public static void recursiveListFiles (FtpClient ftpClient, String remoteDir, CountDownLatch latch, List<String> dirList, List<String> fileList, String prefix, Handler<Boolean> handler) throws InterruptedException {
+        if (!remoteDir.endsWith("/")) {
+            throw new IllegalArgumentException("remoteDir has to end with '/'!");
+        }
+
+        System.err.println("listDir: " + remoteDir);
+
+        CountDownLatch latch1 = new CountDownLatch(1);
+
+        listFiles(ftpClient, remoteDir, latch1, list -> {
+            System.err.println("dir '" + remoteDir + "' contains " + list.size() + " entries.");
+
+            for (FTPFile file : list) {
+                System.err.println("FTPFile: " + file.getName());
+
+                if (file.isDirectory()) {
+                    dirList.add(prefix + file.getName());
+
+                    CountDownLatch latch2 = new CountDownLatch(1);
+
+                    System.err.println("isDir: " + prefix + file.getName());
+
+                    //TODO: search for other dirs
+                    try {
+                        recursiveListFiles(ftpClient, remoteDir + file.getName() + "/", latch2, dirList, fileList, prefix + file.getName() + "/", event -> {
+                            //latch2.countDown();
+                        });
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.w(LOG_TAG, "InterruptedException in method FTPUtils.recursiveListFiles(): ", e);
+
+                        latch2.countDown();
+                    }
+
+                    try {
+                        latch2.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.w(LOG_TAG, "InterruptedException in method FTPUtils.recursiveListFiles(): ", e);
+                    }
+                } else {
+                    System.err.println("file: " + prefix + file.getName());
+                    fileList.add(prefix + file.getName());
+                }
+            }
+
+            latch1.countDown();
+        });
+
+        latch1.await();
+
+        handler.handle(true);
+        latch.countDown();
+    }*/
 
     public static void listFiles (FtpClient ftpClient, String remoteDir, CountDownLatch latch, Handler<List<FTPFile>> handler) {
         Log.v(LOG_TAG, "try to list files from remote ftp server: " + remoteDir);
+        System.err.println("try to list files from remote ftp server: " + remoteDir);
 
         ftpClient.list(remoteDir, res -> {
             if (!res.succeeded()) {
@@ -79,24 +129,8 @@ public class FTPUtils {
             }
 
             String str = res.result().toString();
-            /*str = str.replace("\r\n", "\n");
-            String[] lines = str.split("\n");
-
-            for (String line : lines) {
-                System.err.println(line);
-                String[] array = line.split(" ");
-
-                for (int i = 0; i < array.length; i++) {
-                    System.err.println("[" + i + "] " + array[i]);
-                }
-            }*/
 
             List<FTPFile> files = FTPFile.listing(str);
-
-            //quick and dirty fix, because the regex in FtpFile doesn't support the @ character for usernames, it only supports [A-Z][a-z][a-z].
-            //str = str.replace("@", "AT");
-
-            //List<FtpFile> files = FtpFile.listing(str);
 
             handler.handle(files);
             latch.countDown();
