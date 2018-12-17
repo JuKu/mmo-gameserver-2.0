@@ -1,5 +1,6 @@
 package com.jukusoft.mmo.gs.frontend.network;
 
+import com.jukusoft.mmo.engine.shared.config.Cache;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.messages.JoinRegionMessage;
 import com.jukusoft.mmo.gs.region.RegionContainer;
@@ -35,6 +36,8 @@ public class ClientInitializerTest {
 
         Config.set("Cluster", "username", "dev");
         Config.set("Cluster", "password", "dev-pass");
+
+        Cache.init("../cache/");
     }
 
     @AfterClass
