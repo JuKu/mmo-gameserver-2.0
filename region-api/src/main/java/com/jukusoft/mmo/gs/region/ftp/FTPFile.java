@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class FTPFile {
 
     private static Logger log = LoggerFactory.getLogger(File.class);

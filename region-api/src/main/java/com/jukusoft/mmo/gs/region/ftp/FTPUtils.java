@@ -9,6 +9,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class FTPUtils {
 
     protected static final String LOG_TAG = "FTPUtils";

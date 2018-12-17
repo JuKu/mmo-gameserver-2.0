@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Deprecated
 public class FTPFactory {
 
     protected static final String LOG_TAG = "FTP";
