@@ -11,13 +11,13 @@ before_install:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS my_test_database2;'
   - sudo apt-get install proftpd-basic -y
   - sudo cp ./junit-tests/proftpd/proftpd.conf /etc/proftpd/proftpd.conf
-  - cat ./junit-tests/proftpd/passwd.txt
+  - sudo /etc/init.d/proftpd restart
   - cd /etc/proftpd
   - passwd="testpass"
   - sudo mkdir /var/www
   - sudo mkdir /var/www/ftptest
   - id ftp
-  - sudo echo $passwd | ftpasswd --stdin --passwd --name test --uid 119 --home /var/www/ftptest --shell /bin/false
+  - echo $passwd | sudo ftpasswd --stdin --passwd --name test --uid 119 --gid 65534 --home /var/www/ftptest --shell /bin/false
 #  - sudo ftpasswd --stdin --passwd --name test --uid 33 --home /var/www/ftptest --shell /bin/false < ./junit-tests/proftpd/passwd.txt
 #  - sudo ftpasswd --passwd --name testftp --home /var/www/ftptest --shell /bin/false
   - sudo cat /etc/proftpd/ftpd.passwd
