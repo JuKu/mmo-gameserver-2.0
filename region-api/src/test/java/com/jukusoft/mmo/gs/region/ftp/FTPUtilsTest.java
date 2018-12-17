@@ -102,6 +102,7 @@ public class FTPUtilsTest {
         assertNotNull(ftpClient);
 
         String remoteDir = Config.get("FTP", "regionsDir") + "/region_1_1";
+        System.err.println("testListFiles: " + remoteDir);
 
         AtomicInteger counter = new AtomicInteger(0);
 
