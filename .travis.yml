@@ -10,8 +10,11 @@ before_install:
   - mysql -e 'DROP DATABASE IF EXISTS my_test_database2;'
   - mysql -e 'CREATE DATABASE IF NOT EXISTS my_test_database2;'
   - sudo apt-get install proftpd-basic -y
-  - cat /etc/proftpd/proftpd.conf
-  - cp ./junit-tests/proftpd.conf /etc/proftpd/proftpd.conf
+  - sudo cp ./junit-tests/proftpd/proftpd.conf /etc/proftpd/proftpd.conf
+  - cd /etc/proftpd
+  - sudo ftpasswd --passwd --name testftp --home /var/www/ftptest --shell /bin/false
+  - cat /etc/proftpd/ftpd.passwd
+  - sudo /etc/init.d/proftpd restart
 
 # https://wiki.debianforum.de/FTP-Server_mit_ProFTPD
 # https://docs.travis-ci.com/user/installing-dependencies/
