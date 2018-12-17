@@ -2,6 +2,7 @@ package com.jukusoft.mmo.gs.region.ftp;
 
 import com.jukusoft.mmo.engine.shared.config.Cache;
 import com.jukusoft.mmo.engine.shared.config.Config;
+import com.jukusoft.mmo.engine.shared.utils.FileUtils;
 import com.jukusoft.mmo.engine.shared.utils.PlatformUtils;
 import io.github.bckfnn.ftp.FtpClient;
 import io.vertx.core.Vertx;
@@ -14,6 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import static org.junit.Assert.assertEquals;
 
 public class FTPUtilTest {
 
@@ -97,6 +101,8 @@ public class FTPUtilTest {
 
     @Test
     public void testDownloadDir () throws IOException {
+        assertEquals(false, new File(Cache.getInstance().getCachePath("junit-ftp-tests") + "my-test.txt").exists());
+
         String server = Config.get(CONFIG_SECTION, "host");
         int port = Config.getInt(CONFIG_SECTION, "port");
         String user = Config.get(CONFIG_SECTION, "username");
@@ -118,11 +124,14 @@ public class FTPUtilTest {
 
         String saveDirPath = Cache.getInstance().getCachePath("junit-ftp-tests");
 
-        FTPUtil.downloadDirectory(ftpClient, remoteDirPath, "", saveDirPath);
+        FTPUtil.downloadDirectory(ftpClient, remoteDirPath, saveDirPath);
 
         // log out and disconnect from the server
         ftpClient.logout();
         ftpClient.disconnect();
+
+        assertEquals(true, new File(Cache.getInstance().getCachePath("junit-ftp-tests") + "my-test.txt").exists());
+        assertEquals("test1234", FileUtils.readFile(Cache.getInstance().getCachePath("junit-ftp-tests") + "my-test.txt", StandardCharsets.UTF_8));
     }
 
 }
