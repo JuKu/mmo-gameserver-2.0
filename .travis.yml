@@ -11,6 +11,7 @@ before_install:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS my_test_database2;'
   - sudo apt-get install proftpd-basic -y
   - sudo cp ./junit-tests/proftpd/proftpd.conf /etc/proftpd/proftpd.conf
+  - pwd
   - cd /etc/proftpd
   - passwd="testpass"
   - sudo mkdir /var/www
