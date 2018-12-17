@@ -1,5 +1,6 @@
 package com.jukusoft.mmo.gs.region.ftp;
 
+import com.jukusoft.mmo.engine.shared.logger.Log;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -7,6 +8,8 @@ import org.apache.commons.net.ftp.FTPFile;
 import java.io.*;
 
 public class FTPUtil {
+
+    protected static final String LOG_TAG = "FTPUtil";
 
     protected FTPUtil () {
         //
@@ -84,9 +87,9 @@ public class FTPUtil {
 
                     boolean created = newDir.mkdirs();
                     if (created) {
-                        System.out.println("CREATED the directory: " + dirPath);
+                        Log.d(LOG_TAG, "CREATED the directory: " + dirPath);
                     } else {
-                        System.out.println("COULD NOT create the directory: " + dirPath);
+                        Log.d(LOG_TAG, "COULD NOT create the directory: " + dirPath);
                     }
 
                     // download the sub directory
@@ -95,15 +98,13 @@ public class FTPUtil {
                 } else {
                     String savePath = saveDir + parentDir + currentFileName;
 
-                    //System.err.println("DOWNLOAD " + filePath + " to " + savePath);
-
                     // download the file
                     boolean success = downloadSingleFile(ftpClient, filePath,
                             savePath);
                     if (success) {
-                        System.out.println("DOWNLOADED the file: " + filePath + " and saved to: " + savePath);
+                        Log.d(LOG_TAG, "DOWNLOADED the file: " + filePath + " and saved to: " + savePath);
                     } else {
-                        System.out.println("COULD NOT download the file: "
+                        Log.d(LOG_TAG, "COULD NOT download the file: "
                                 + filePath);
                     }
                 }
