@@ -8,6 +8,12 @@ import io.vertx.core.Vertx;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockftpserver.fake.FakeFtpServer;
+import org.mockftpserver.fake.UserAccount;
+import org.mockftpserver.fake.filesystem.DirectoryEntry;
+import org.mockftpserver.fake.filesystem.FileSystem;
+import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
+import org.mockftpserver.fake.filesystem.WindowsFakeFileSystem;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -26,6 +32,7 @@ public class FTPUtilsTest {
     //https://github.com/bckfnn/vertx-ftp-client/blob/3f33d076c10467908fd5f4591ebce809cae7cb48/src/main/java/io/github/bckfnn/ftp/FtpClient.java
 
     protected static Vertx vertx;
+    protected static FakeFtpServer fakeFtpServer;
 
     @BeforeClass
     public static void beforeClass () throws IOException {
@@ -69,6 +76,26 @@ public class FTPUtilsTest {
             Config.set("FTP", "password", System.getProperty("ftp.password"));
         }
 
+        //start ftp server
+        /*fakeFtpServer = new FakeFtpServer();
+        fakeFtpServer.addUserAccount(new UserAccount("test", "testpass", "../junit-tests/ftp-files/"));
+
+        FileSystem fileSystem = new UnixFakeFileSystem();
+        fileSystem.add(new DirectoryEntry("/var/www/ftptest"));
+        //fileSystem.add(new FileEntry("c:\\data\\file1.txt", "abcdef 1234567890"));
+        //fileSystem.add(new FileEntry("c:\\data\\run.exe"));
+        fakeFtpServer.setFileSystem(fileSystem);
+
+        fakeFtpServer.start();
+
+        System.err.println("fake ftp server started.");
+
+        try {
+            Thread.sleep(300000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+
         vertx = Vertx.vertx();
 
         //check ftp connection
@@ -79,6 +106,8 @@ public class FTPUtilsTest {
     public static void afterClass () {
         vertx.close();
         Config.clear();
+
+        //fakeFtpServer.stop();
     }
 
     @Test
