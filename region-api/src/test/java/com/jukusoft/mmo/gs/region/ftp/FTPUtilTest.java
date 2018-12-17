@@ -53,6 +53,7 @@ public class FTPUtilTest {
         File cacheDir = new File(Cache.getInstance().getCachePath("junit-ftp-tests"));
 
         if (cacheDir.exists()) {
+            FileUtils.recursiveDeleteDirectory(cacheDir, false);
             cacheDir.delete();
         }
 

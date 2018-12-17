@@ -47,83 +47,12 @@ public class FTPUtil {
     /**
      * Download a whole directory from a FTP server.
      * @param ftpClient an instance of org.apache.commons.net.ftp.FTPClient class.
-     * @param remoteDir Path of the parent directory of the current directory being
-     * downloaded.
-     * //@param currentDir Path of the current directory being downloaded.
+     * @param remoteDir Path of the remote directory being downloaded.
      * @param saveDir path of directory where the whole remote directory will be
      * downloaded and saved.
+     *
      * @throws IOException if any network or IO error occurred.
      */
-    /*public static void downloadDirectory(FTPClient ftpClient, String remoteDir, String parentDir,
-                                         String currentDir, String saveDir) throws IOException {
-        String dirToList = remoteDir;
-        if (!currentDir.equals("")) {
-            dirToList += "/" + currentDir;
-        } else {
-            System.err.println("currentDir is empty! remoteDir: " + remoteDir);
-        }
-
-        org.apache.commons.net.ftp.FTPFile[] subFiles = ftpClient.listFiles(dirToList);
-
-        if (subFiles != null && subFiles.length > 0) {
-            for (FTPFile aFile : subFiles) {
-                String currentFileName = aFile.getName();
-
-                if (currentFileName.equals(".") || currentFileName.equals("..")) {
-                    // skip parent directory and the directory itself
-                    continue;
-                }
-
-                String filePath = remoteDir + "/" + currentDir + "/"
-                        + currentFileName;
-                if (currentDir.equals("")) {
-                    filePath = remoteDir + "/" + currentFileName;
-                }
-
-                String newDirPath = saveDir + remoteDir + File.separator
-                        + currentDir + File.separator + currentFileName;
-                if (currentDir.equals("")) {
-                    newDirPath = saveDir + remoteDir + File.separator
-                            + currentFileName;
-                }
-
-                System.err.println("remoteDir: " + remoteDir);
-                System.err.println("parentDir: " + parentDir);
-                System.err.println("currentDir: " + currentDir);
-                System.err.println("filePath: " + filePath);
-                System.err.println("newDirPath: " + newDirPath);
-                System.err.println("savePath: " + saveDir);
-
-                if (aFile.isDirectory()) {
-                    // create the directory in saveDir
-                    File newDir = new File(newDirPath);
-                    boolean created = newDir.mkdirs();
-                    if (created) {
-                        System.out.println("CREATED the directory: " + newDirPath);
-                    } else {
-                        System.out.println("COULD NOT create the directory: " + newDirPath);
-                    }
-
-                    String newParentDir = ((parentDir.isEmpty() ? currentFileName : parentDir + currentFileName) + File.separator).replace("\\", "/");
-
-                    // download the sub directory
-                    downloadDirectory(ftpClient, dirToList, newParentDir, currentFileName,
-                            saveDir);
-                } else {
-                    // download the file
-                    boolean success = downloadSingleFile(ftpClient, filePath,
-                            newDirPath);
-                    if (success) {
-                        System.out.println("DOWNLOADED the file: " + filePath + " and saved to: " + newDirPath);
-                    } else {
-                        System.out.println("COULD NOT download the file: "
-                                + filePath);
-                    }
-                }
-            }
-        }
-    }*/
-
     public static void downloadDirectory(FTPClient ftpClient, String remoteDir, String saveDir) throws IOException {
         downloadDirectory(ftpClient, remoteDir, "", saveDir);
     }
@@ -133,13 +62,7 @@ public class FTPUtil {
             throw new IllegalArgumentException("saveDir has to end with slash '/'!");
         }
 
-        System.err.println("----------------");
-
-        System.out.println("parentDir: " + parentDir);
-
         String dirToList = remoteDir + (parentDir.isEmpty() ? "" : "/" + parentDir);
-
-        System.err.println("dirToList: " + dirToList);
 
         //list files & directories in current dir
         org.apache.commons.net.ftp.FTPFile[] subFiles = ftpClient.listFiles(dirToList);
@@ -153,10 +76,7 @@ public class FTPUtil {
                     continue;
                 }
 
-                System.err.println("currentFileName: " + currentFileName);
-
                 String filePath = remoteDir + "/" + parentDir + currentFileName;
-                System.err.println("filePath: " + filePath);
 
                 if (aFile.isDirectory()) {
                     String dirPath = saveDir + parentDir + currentFileName;
