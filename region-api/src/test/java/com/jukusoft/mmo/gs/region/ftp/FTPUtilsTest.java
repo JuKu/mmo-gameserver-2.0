@@ -78,7 +78,7 @@ public class FTPUtilsTest {
 
         //start ftp server
         /*fakeFtpServer = new FakeFtpServer();
-        fakeFtpServer.addUserAccount(new UserAccount("test", "testpass", "../junit-tests/ftp-files/"));
+        fakeFtpServer.addUserAccount(new UserAccount("test", "testpass", "/"));
 
         FileSystem fileSystem = new UnixFakeFileSystem();
         fileSystem.add(new DirectoryEntry("/var/www/ftptest"));
@@ -87,6 +87,8 @@ public class FTPUtilsTest {
         fakeFtpServer.setFileSystem(fileSystem);
 
         fakeFtpServer.start();
+        int port = fakeFtpServer.getServerControlPort();
+        System.err.println("start ftp server on port " + port);
 
         System.err.println("fake ftp server started.");
 
