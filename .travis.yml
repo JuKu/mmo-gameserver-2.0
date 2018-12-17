@@ -22,6 +22,7 @@ before_install:
 #  - sudo ftpasswd --passwd --name testftp --home /var/www/ftptest --shell /bin/false
   - sudo cat /etc/proftpd/ftpd.passwd
   - sudo /etc/init.d/proftpd restart
+  - cd /home/travis/build/JuKu/mmo-gameserver-2.0
 
 # https://wiki.debianforum.de/FTP-Server_mit_ProFTPD
 # https://docs.travis-ci.com/user/installing-dependencies/
