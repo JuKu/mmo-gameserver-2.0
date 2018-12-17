@@ -37,7 +37,7 @@ public class DatabaseFactory {
         try {
             buildStaticDB(vertx).close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Log.w(DATABASE_TAG, "SQLException while initializing static database: ", e);
         }
 
         try {
