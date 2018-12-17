@@ -1,5 +1,6 @@
 package com.jukusoft.mmo.gs.region.ftp;
 
+import com.jukusoft.mmo.engine.shared.config.Cache;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.utils.PlatformUtils;
 import com.jukusoft.mmo.gs.region.utils.DummyHandler;
@@ -77,6 +78,18 @@ public class FTPUtilsTest {
         if (System.getProperties().contains("ftp.password")) {
             Config.set("FTP", "password", System.getProperty("ftp.password"));
         }
+
+        Cache.init("../cache/");
+
+        //create cache directory
+        File cacheDir = new File(Cache.getInstance().getCachePath("junit-ftp-tests"));
+
+        if (cacheDir.exists()) {
+            cacheDir.delete();
+        }
+
+        System.err.println("create cache dir: " + cacheDir.getAbsolutePath());
+        cacheDir.mkdirs();
 
         //start ftp server
         /*fakeFtpServer = new FakeFtpServer();
