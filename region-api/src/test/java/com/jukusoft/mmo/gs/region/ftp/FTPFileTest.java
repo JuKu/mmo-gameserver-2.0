@@ -55,4 +55,11 @@ public class FTPFileTest {
         assertEquals(3, files.size());
     }
 
+    @Test
+    public void testToString () {
+        FTPFile file = FTPFile.from("drwxr-xr-x   2 ftp1@subdomain.example.com MMORPG       4096 Dec 15 00:38 client");
+        assertNotNull(file);
+        assertNotNull(file.toString());
+    }
+
 }
