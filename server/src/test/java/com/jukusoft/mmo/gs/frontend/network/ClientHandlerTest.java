@@ -17,7 +17,6 @@ import io.vertx.core.streams.WriteStream;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -28,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 
-public class ClientInitializerTest {
+public class ClientHandlerTest {
 
     @BeforeClass
     public static void beforeClass () {
@@ -47,12 +46,12 @@ public class ClientInitializerTest {
 
     @Test (expected = NullPointerException.class)
     public void testNullConstructor () {
-        new ClientInitializer(null);
+        new ClientHandler(null, 1, Mockito.mock(Handler.class));
     }
 
     @Test
     public void testConstructor () {
-        new ClientInitializer(new RegionManager() {
+        new ClientHandler(new RegionManager() {
             @Override
             public RegionContainer find(long regionID, int instanceID, int shardID) {
                 return null;
@@ -62,12 +61,12 @@ public class ClientInitializerTest {
             public void start(long regionID, int instanceID, int shardID, Handler<RegionContainer> handler) {
                 //
             }
-        });
+        }, 1, Mockito.mock(Handler.class));
     }
 
     @Test
     public void testHandleConnect () {
-        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
 
         BufferStream stream = new BufferStream(createReadStream(), createWriteStream());
         initializer.handleConnect(stream, Mockito.mock(RemoteConnection.class));
@@ -75,7 +74,7 @@ public class ClientInitializerTest {
 
     @Test (expected = UnauthentificatedException.class)
     public void testOnUnauthentificatedMessage () {
-        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
 
         //test internal state
         assertEquals(false, initializer.authentificated);
@@ -90,7 +89,7 @@ public class ClientInitializerTest {
 
     @Test (expected = UnauthentificatedException.class)
     public void testOnUnauthentificatedMessage1 () {
-        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
 
         //test internal state
         assertEquals(false, initializer.authentificated);
@@ -105,7 +104,7 @@ public class ClientInitializerTest {
 
     @Test (expected = UnauthentificatedException.class)
     public void testOnUnauthentificatedMessage2 () {
-        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
 
         //test internal state
         assertEquals(false, initializer.authentificated);
@@ -120,7 +119,7 @@ public class ClientInitializerTest {
 
     @Test
     public void testOnMessageRedirect () {
-        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
         initializer.authentificated = true;
 
         AtomicBoolean b = new AtomicBoolean(false);
@@ -150,7 +149,7 @@ public class ClientInitializerTest {
 
     @Test (expected = WrongClusterCredentialsException.class)
     public void testHandleJoinMessageWithWrongCredentials () {
-        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
 
         JoinRegionMessage msg = new JoinRegionMessage();
         msg.cluster_username = "test";
@@ -162,7 +161,7 @@ public class ClientInitializerTest {
 
     @Test (expected = WrongClusterCredentialsException.class)
     public void testHandleJoinMessageWithWrongClusterUser () {
-        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
 
         JoinRegionMessage msg = new JoinRegionMessage();
         msg.cluster_username = "test";
@@ -174,7 +173,7 @@ public class ClientInitializerTest {
 
     @Test (expected = WrongClusterCredentialsException.class)
     public void testHandleJoinMessageWithWrongClusterPassword () {
-        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
 
         JoinRegionMessage msg = new JoinRegionMessage();
         msg.cluster_username = "dev";
@@ -189,7 +188,7 @@ public class ClientInitializerTest {
         RegionManager regionManager = Mockito.mock(RegionManager.class);
         Mockito.when(regionManager.find(anyLong(), anyInt(), anyInt())).thenReturn(new RegionContainerImpl(1, 2, 3));
 
-        ClientInitializer initializer = new ClientInitializer(regionManager);
+        ClientHandler initializer = new ClientHandler(regionManager, 1, Mockito.mock(Handler.class));
 
         JoinRegionMessage msg = new JoinRegionMessage();
         msg.cluster_username = "dev";
@@ -207,7 +206,7 @@ public class ClientInitializerTest {
         RegionManager regionManager = Mockito.mock(RegionManager.class);
         Mockito.when(regionManager.find(anyLong(), anyInt(), anyInt())).thenReturn(null);
 
-        ClientInitializer initializer = new ClientInitializer(regionManager);
+        ClientHandler initializer = new ClientHandler(regionManager, 1, Mockito.mock(Handler.class));
         initializer.conn = Mockito.mock(RemoteConnection.class);
 
         JoinRegionMessage msg = new JoinRegionMessage();
@@ -223,7 +222,7 @@ public class ClientInitializerTest {
 
     @Test (expected = IllegalStateException.class)
     public void testHandleJoinMessageWithCorrectCredentialsRegionNotRunning () {
-        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
 
         JoinRegionMessage msg = new JoinRegionMessage();
         msg.cluster_username = "dev";
@@ -235,7 +234,7 @@ public class ClientInitializerTest {
 
     @Test
     public void testOnClose () {
-        ClientInitializer initializer = new ClientInitializer(Mockito.mock(RegionManager.class));
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
         initializer.onClose(Mockito.mock(RemoteConnection.class));
     }
 

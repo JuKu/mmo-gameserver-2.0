@@ -11,11 +11,12 @@ import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import com.jukusoft.vertx.connection.stream.BufferStream;
 import com.jukusoft.vertx.serializer.Serializer;
 import com.jukusoft.vertx.serializer.utils.ByteUtils;
+import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 
 import java.util.Objects;
 
-public class ClientInitializer implements CustomClientInitializer {
+public class ClientHandler implements CustomClientInitializer {
 
     protected static final String LOG_TAG = "ClientInit";
     protected static final String AUTH_TAG = "Auth";
@@ -30,15 +31,19 @@ public class ClientInitializer implements CustomClientInitializer {
     protected final RegionManager regionManager;
 
     protected RegionContainer regionContainer = null;
+    protected final Handler<Long> closeHandler;
+    protected final long connID;
 
     /**
     * default constructor
      *
      * @param regionManager singleton instance of region manager
     */
-    public ClientInitializer (RegionManager regionManager) {
+    public ClientHandler(RegionManager regionManager, long connID, Handler<Long> closeHandler) {
         Objects.requireNonNull(regionManager);
         this.regionManager = regionManager;
+        this.connID = connID;
+        this.closeHandler = closeHandler;
     }
 
     @Override
@@ -64,6 +69,7 @@ public class ClientInitializer implements CustomClientInitializer {
             this.regionContainer.logoutPlayer(this.user, this.state.getCID());
         }
 
+        this.closeHandler.handle(this.connID);
         this.state = null;
     }
 
@@ -139,7 +145,7 @@ public class ClientInitializer implements CustomClientInitializer {
                 this.regionContainer.receive(buffer, conn);
             }
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Exception in method ClientInitializer.onMessage(): ", e);
+            Log.e(LOG_TAG, "Exception in method ClientHandler.onMessage(): ", e);
             throw e;
         }
     }

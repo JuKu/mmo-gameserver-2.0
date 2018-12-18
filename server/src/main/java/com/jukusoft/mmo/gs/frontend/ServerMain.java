@@ -13,9 +13,10 @@ import com.jukusoft.mmo.engine.shared.messages.LoadMapResponse;
 import com.jukusoft.mmo.engine.shared.utils.FileUtils;
 import com.jukusoft.mmo.engine.shared.utils.Utils;
 import com.jukusoft.mmo.engine.shared.version.Version;
+import com.jukusoft.mmo.gs.frontend.network.ClientHandler;
+import com.jukusoft.mmo.gs.frontend.network.ClientInitializerFactory;
 import com.jukusoft.mmo.gs.region.database.DatabaseFactory;
 import com.jukusoft.mmo.gs.frontend.log.HzLogger;
-import com.jukusoft.mmo.gs.frontend.network.ClientInitializer;
 import com.jukusoft.mmo.gs.frontend.utils.*;
 import com.jukusoft.mmo.gs.region.RegionManager;
 import com.jukusoft.mmo.gs.region.RegionManagerImpl;
@@ -186,7 +187,7 @@ public class ServerMain {
         RegionManager regionManager = new RegionManagerImpl();
 
         //set custom client initializer
-        server.setCustomClientInitializer(new ClientInitializer(regionManager));
+        server.setCustomClientInitializer(new ClientInitializerFactory(regionManager));
 
         server.setClientHandler(event -> {
             Log.i("TCPServer", "new client connection.");
