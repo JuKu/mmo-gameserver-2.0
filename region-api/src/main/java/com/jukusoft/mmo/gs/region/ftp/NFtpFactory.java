@@ -29,7 +29,7 @@ public class NFtpFactory {
 
     public static void create (String host, int port, String user, String password, CountDownLatch latch, Handler<FTPClient> handler) {
         if (vertx == null) {
-            throw new IllegalStateException("initialize FTPFactory with FTPFactory.init() call first!");
+            throw new IllegalStateException("initialize NFtpFactory with NFtpFactory.init() call first!");
         }
 
         //https://www.rhymewithgravy.com/2016/10/18/Vertx-and-Blocking-Code.html

@@ -7,10 +7,7 @@ import com.jukusoft.mmo.engine.shared.utils.PlatformUtils;
 import io.github.bckfnn.ftp.FtpClient;
 import io.vertx.core.Vertx;
 import org.apache.commons.net.ftp.FTPClient;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -72,7 +69,7 @@ public class FTPUtilTest {
         org.junit.Assume.assumeTrue(PlatformUtils.isWindows());
     }
 
-    @Before
+    @After
     public void windowsOnlyAfter() {
         //
     }
