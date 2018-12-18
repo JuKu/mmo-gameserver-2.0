@@ -123,7 +123,7 @@ public class Database {
         try {
             Connection connection = getConnection(name);
             return new SimpleDBClient(connection, mySQLConfig.getPrefix());
-        } catch (SQLException e) {
+        } catch (Exception e) {
             Log.e(LOG_TAG, "Cannot get DBClient: ", e);
             throw new IllegalStateException("Cannot get DBClient: ", e);
         }

@@ -82,7 +82,7 @@ public class DatabaseTest {
         assertEquals("SELECT * FROM `mmo_users`; ", query);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = IllegalStateException.class)
     public void testGetClientWithUnknownName () throws IOException {
         //load test mysql configuration
         MySQLConfig mySQLConfig = createConfig();
