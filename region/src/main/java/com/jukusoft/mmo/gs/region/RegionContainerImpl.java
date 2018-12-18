@@ -248,6 +248,7 @@ public class RegionContainerImpl implements RegionContainer {
                         this.regionTitle = rs.getString("title");
                         this.locked = rs.getInt("locked") == 1;
 
+                        //increment counter so we can verify, that min one result is available --> row exists
                         counter++;
                     }
                 }
