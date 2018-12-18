@@ -5,15 +5,25 @@ import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.utils.PlatformUtils;
 import com.jukusoft.mmo.gs.region.ftp.NFtpFactory;
+import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
+import org.apache.commons.net.ftp.FTPClient;
 import org.junit.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 public class RegionContainerImplTest {
 
@@ -50,6 +60,22 @@ public class RegionContainerImplTest {
         Log.init();
 
         vertx = Mockito.mock(Vertx.class);
+
+        //mock vertx.executeBlocking()
+        Mockito.doAnswer(invocation -> {
+            //execute handler
+            Handler<Future<FTPClient>> handler = invocation.getArgument(0);
+            Handler<AsyncResult<FTPClient>> resultHandler = invocation.getArgument(1);
+
+            Future<FTPClient> future = Future.future();
+            future.setHandler(event -> {
+                resultHandler.handle(future);
+            });
+            handler.handle(future);
+
+            return null;
+        }).when(vertx).executeBlocking(any(Handler.class), any(Handler.class));
+
         NFtpFactory.init(vertx);
     }
 
@@ -99,13 +125,21 @@ public class RegionContainerImplTest {
     }
 
     @Test
-    public void testInit () {
+    public void testInit () throws InterruptedException {
         RegionContainer container = new RegionContainerImpl(1, 1, 1);
         assertEquals(false, ((RegionContainerImpl) container).initialized);
+        assertEquals(false, ((RegionContainerImpl) container).ftpFilesLoaded);
 
         container.init();
 
         assertEquals(true, ((RegionContainerImpl) container).initialized);
+        assertEquals(true, container.isInitialized());
+
+        //because we mocked vertx.executeBlocking() to synchronous methods, we can check this here directly
+        assertEquals(true, ((RegionContainerImpl) container).ftpFilesLoaded);
+
+        //wait 200ms for logs
+        Thread.sleep(200);
     }
 
 }

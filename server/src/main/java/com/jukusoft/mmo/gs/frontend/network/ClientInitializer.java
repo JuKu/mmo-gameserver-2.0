@@ -102,7 +102,7 @@ public class ClientInitializer implements CustomClientInitializer {
 
                     //initialize player on container
                     User user = new User(joinMessage.userID, joinMessage.username, joinMessage.listGroups());
-                    this.regionContainer.initPlayer(user, joinMessage.cid);
+                    this.regionContainer.initPlayer(user, joinMessage.cid, this.conn);
 
                     this.authentificated = true;
                 } else {

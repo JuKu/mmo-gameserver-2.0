@@ -24,7 +24,7 @@ public interface RegionContainer {
      * @param user current user which plays this character (this hasn't to be the owner of the character, this can also be a gamemaster!)
      * @param cid character id
     */
-    public void initPlayer(User user, int cid);
+    public void initPlayer(User user, int cid, RemoteConnection conn);
 
     /**
     * receive network message
