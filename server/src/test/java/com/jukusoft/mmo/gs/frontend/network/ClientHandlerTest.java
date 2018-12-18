@@ -6,6 +6,7 @@ import com.jukusoft.mmo.engine.shared.messages.JoinRegionMessage;
 import com.jukusoft.mmo.gs.region.RegionContainer;
 import com.jukusoft.mmo.gs.region.RegionContainerImpl;
 import com.jukusoft.mmo.gs.region.RegionManager;
+import com.jukusoft.mmo.gs.region.user.User;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import com.jukusoft.vertx.connection.stream.BufferStream;
 import com.jukusoft.vertx.serializer.Serializer;
@@ -235,6 +236,14 @@ public class ClientHandlerTest {
     @Test
     public void testOnClose () {
         ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
+        initializer.onClose(Mockito.mock(RemoteConnection.class));
+    }
+
+    @Test
+    public void testOnCloseLoggedInUser () {
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
+        initializer.regionContainer = Mockito.mock(RegionContainer.class);
+        initializer.user = new User(1, "test", new ArrayList<>());
         initializer.onClose(Mockito.mock(RemoteConnection.class));
     }
 
