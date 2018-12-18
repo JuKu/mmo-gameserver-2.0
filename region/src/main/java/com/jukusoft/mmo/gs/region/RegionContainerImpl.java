@@ -122,11 +122,9 @@ public class RegionContainerImpl implements RegionContainer {
                 this.indexClientCache();
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Coulnd't index region ftp files: " + this.cachePath, e);
-                e.printStackTrace();
                 return;
             }
 
-            System.err.println("set ftpFilesLoaded = true.");
             ftpInitLock.lock();
             ftpFilesLoaded = true;
             ftpInitLock.unlock();
