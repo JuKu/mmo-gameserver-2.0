@@ -35,15 +35,15 @@ public class FTPUtil {
 
         OutputStream outputStream = new BufferedOutputStream(
                 new FileOutputStream(downloadFile));
+
         try {
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             return ftpClient.retrieveFile(remoteFilePath, outputStream);
-        } catch (IOException ex) {
-            throw ex;
+        } catch (IOException e) {
+            Log.w(LOG_TAG, "IOException while downloading single file " + remoteFilePath + " stored to file " + savePath + ": ", e);
+            throw e;
         } finally {
-            if (outputStream != null) {
-                outputStream.close();
-            }
+            outputStream.close();
         }
     }
 
