@@ -107,7 +107,7 @@ public class ServerMain {
 
         //initialize cache
         Log.i(CACHE_TAG, "initialize cache...");
-        Cache.init(Config.get("Cache", "path"));
+        Cache.init(Config.get(CACHE_TAG, "path"));
         Log.i(CACHE_TAG, "cache path: " + Cache.getInstance().getPath());
         Log.i(CACHE_TAG, "clear cache: " + Cache.getInstance().getPath());
         FileUtils.recursiveDeleteDirectory(new File(Cache.getInstance().getPath()), false);
@@ -190,7 +190,7 @@ public class ServerMain {
             Thread.sleep(100);
         }
 
-        String ip = Config.get("GameServer", "ip");
+        String ip = Config.get(SECTION_NAME, "ip");
 
         //inform others in cluster that this gs server exists
         Log.i("Cluster", "add gameserver to hazelcast serverlist for load balancing.");
