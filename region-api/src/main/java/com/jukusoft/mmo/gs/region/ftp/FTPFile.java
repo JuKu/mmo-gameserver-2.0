@@ -1,5 +1,6 @@
 package com.jukusoft.mmo.gs.region.ftp;
 
+import com.jukusoft.mmo.engine.shared.logger.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,8 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FTPFile {
-
-    private static Logger log = LoggerFactory.getLogger(File.class);
 
     private static Pattern filere = Pattern.compile("(.).........+(\\d+) ([A-Za-z0-9@\\.]+) +([A-Za-z0-9]+) +(\\d+) ([A-Z][a-z][a-z]) +(\\d+) +(\\d+):(\\d+) +([A-Za-z0-9@\\.\\-_]+)");
 
@@ -43,9 +42,9 @@ public class FTPFile {
 
     public static FTPFile from(String line) {
         Matcher m = filere.matcher(line);
-        //log.info("file:" + f.toString());
+
         if (!m.matches()) {
-            log.error("line " + line + " does not match dir re");
+            Log.e("FTPFile", "line " + line + " does not match dir re");
             return null;
         } else {
             String size = m.group(5);
