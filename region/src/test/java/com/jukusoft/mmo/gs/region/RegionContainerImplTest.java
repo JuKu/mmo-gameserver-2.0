@@ -142,4 +142,24 @@ public class RegionContainerImplTest {
         Thread.sleep(200);
     }
 
+    @Test
+    public void testIndexClientCache () throws Exception {
+        RegionContainerImpl container = new RegionContainerImpl("../junit-tests/ftp-files/static/regions/region_1_1/");
+        container.indexClientCache();
+
+        assertEquals(3, container.fileHashes.size());
+
+        assertEquals(true, container.fileHashes.containsKey("test.txt"));
+        assertEquals(true, container.fileHashes.containsKey("test2.txt"));
+        assertEquals(true, container.fileHashes.containsKey("dir1/dir1test.txt"));
+
+        //check, if all files are in list
+        assertEquals("098f6bcd4621d373cade4e832627b4f6", container.fileHashes.get("test.txt"));
+        assertEquals("ad0234829205b9033196ba818f7a872b", container.fileHashes.get("test2.txt"));
+        assertEquals("ca2a0cf5b143e25b63fa7e2ef2ac54e7", container.fileHashes.get("dir1/dir1test.txt"));
+
+        //wait 200ms for logs
+        Thread.sleep(200);
+    }
+
 }

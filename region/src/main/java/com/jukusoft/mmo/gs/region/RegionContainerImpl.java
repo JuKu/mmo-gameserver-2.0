@@ -4,6 +4,7 @@ import com.jukusoft.mmo.engine.shared.config.Cache;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.utils.FileUtils;
+import com.jukusoft.mmo.engine.shared.utils.HashUtils;
 import com.jukusoft.mmo.gs.region.ftp.FTPUtil;
 import com.jukusoft.mmo.gs.region.ftp.NFtpFactory;
 import com.jukusoft.mmo.gs.region.user.User;
@@ -62,6 +63,19 @@ public class RegionContainerImpl implements RegionContainer {
         LOG_TAG = "REG_" + regionID + "_" + instanceID + "_" + shardID;
     }
 
+    /**
+    * constructor for junit tests
+    */
+    protected RegionContainerImpl (String cachePath) {
+        this.regionID = 1;
+        this.instanceID = 1;
+        this.shardID = 1;
+
+        this.LOG_TAG = "RegionCont";
+
+        this.cachePath = cachePath;
+    }
+
     @Override
     public void init() {
         Log.i(LOG_TAG, "initialize region...");
@@ -104,13 +118,28 @@ public class RegionContainerImpl implements RegionContainer {
             Log.d(LOG_TAG, "all ftp files received for region and stored in cache.");
 
             //index hashes
-            this.indexClientCache();
+            try {
+                this.indexClientCache();
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Coulnd't index region ftp files: " + this.cachePath, e);
+                e.printStackTrace();
+                return;
+            }
 
+            System.err.println("set ftpFilesLoaded = true.");
             ftpInitLock.lock();
             ftpFilesLoaded = true;
             ftpInitLock.unlock();
 
             //handle all waiting player init entries in queue
+            PlayerTuple player = this.waitingPlayerInitQueue.poll();
+
+            while (player != null) {
+                this.initPlayer(player);
+
+                //get next entry from queue
+                player = this.waitingPlayerInitQueue.poll();
+            }
         });
     }
 
@@ -150,10 +179,24 @@ public class RegionContainerImpl implements RegionContainer {
         throw new UnsupportedOperationException("method isn't implemented yet.");
     }
 
-    private void indexClientCache () {
+    protected void indexClientCache () throws Exception {
         this.fileHashes.clear();
 
-        List<String> fileList = new ArrayList<>();
+        List<String> fileList = FileUtils.listFiles(new File(this.cachePath + "client/"));
+
+        for (String filePath : fileList) {
+            File f = new File(this.cachePath + "client/" + filePath);
+
+            if (!f.exists()) {
+                throw new IOException("Cannot index file, file doesn't exists: " + f.getAbsolutePath());
+            }
+
+            //calculate hash
+            String fileHash = HashUtils.computeMD5FileHash(f);
+            Log.v(LOG_TAG, "calculated hash for file '" + filePath + "': " + fileHash);
+
+            this.fileHashes.put(filePath, fileHash);
+        }
     }
 
 }
