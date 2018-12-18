@@ -200,8 +200,8 @@ public class RegionContainerImpl implements RegionContainer {
             response.addRequiredMap(entry.getKey(), entry.getValue());
         }
 
-        //TODO: add code here
-        //player.conn.send(response);
+        //send message back to client
+        player.conn.send(response);
     }
 
     @Override
