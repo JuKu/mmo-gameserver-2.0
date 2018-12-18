@@ -60,70 +60,79 @@ public class ClientInitializer implements CustomClientInitializer {
     }
 
     protected void onMessage (Buffer buffer, RemoteConnection conn) {
-        this.conn = conn;
+        try {
+            this.conn = conn;
 
-        Log.v(LOG_TAG, "message from proxy server received with type " + ByteUtils.byteToHex(buffer.getByte(0)) + ", extendedType: " + ByteUtils.byteToHex(buffer.getByte(1)) + ".");
+            Log.v(LOG_TAG, "message from proxy server received with type " + ByteUtils.byteToHex(buffer.getByte(0)) + ", extendedType: " + ByteUtils.byteToHex(buffer.getByte(1)) + ".");
 
-        byte type = buffer.getByte(0);
-        byte extendedType = buffer.getByte(1);
+            byte type = buffer.getByte(0);
+            byte extendedType = buffer.getByte(1);
 
-        //check, if user is authentificated
-        if (!authentificated) {
-            //check, if message is a join message
-            if (type == 0x01 && extendedType == 0x07) {
-                //pass message
+            //check, if user is authentificated
+            if (!authentificated) {
+                //check, if message is a join message
+                if (type == 0x01 && extendedType == 0x07) {
+                    //pass message
 
-                Log.i(LOG_TAG, "auth (join) message from proxy server received.");
+                    Log.i(LOG_TAG, "auth (join) message from proxy server received.");
 
-                //handle message
-                JoinRegionMessage joinMessage = Serializer.unserialize(buffer);
+                    //handle message
+                    JoinRegionMessage joinMessage = Serializer.unserialize(buffer);
 
-                //check cluster credentials
-                if (joinMessage.cluster_username.equals(Config.get("Cluster", "username")) && joinMessage.cluster_password.equals(Config.get("Cluster", "password"))) {
-                    //cluster credentials right
+                    //check cluster credentials
+                    if (joinMessage.cluster_username.equals(Config.get("Cluster", "username")) && joinMessage.cluster_password.equals(Config.get("Cluster", "password"))) {
+                        //cluster credentials right
 
-                    //set user state
-                    state.setAuthorized(joinMessage.userID, joinMessage.username, joinMessage.cid, joinMessage.listGroups());
-                    state.setRegion(joinMessage.regionID, joinMessage.instanceID, joinMessage.cid);
-                    Log.i(AUTH_TAG, "proxy connection (" + conn.remoteHost() + ":" + conn.remotePort() + ") authentificated successfully!");
+                        //set user state
+                        state.setAuthorized(joinMessage.userID, joinMessage.username, joinMessage.cid, joinMessage.listGroups());
+                        state.setRegion(joinMessage.regionID, joinMessage.instanceID, joinMessage.cid);
+                        Log.i(AUTH_TAG, "proxy connection (" + conn.remoteHost() + ":" + conn.remotePort() + ") authentificated successfully!");
 
-                    //find region to redirect future messages
-                    this.regionContainer = this.regionManager.find(joinMessage.regionID, joinMessage.instanceID, joinMessage.shardID);
+                        //find region to redirect future messages
+                        this.regionContainer = this.regionManager.find(joinMessage.regionID, joinMessage.instanceID, joinMessage.shardID);
 
-                    if (this.regionContainer == null) {
-                        Log.w(LOG_TAG, "region (" + joinMessage.regionID + "-" + joinMessage.instanceID + "-" + joinMessage.shardID + ") doesn't run on this server!");
+                        if (this.regionContainer == null) {
+                            Log.w(LOG_TAG, "region (" + joinMessage.regionID + "-" + joinMessage.instanceID + "-" + joinMessage.shardID + ") doesn't run on this server!");
 
-                        //TODO: send error message to client
+                            //TODO: send error message to client
 
-                        //TODO: maybe, remove this line later
-                        //close connection
-                        this.conn.disconnect();
+                            //TODO: maybe, remove this line later
+                            //close connection
+                            this.conn.disconnect();
 
-                        throw new IllegalStateException("region (" + joinMessage.regionID + "-" + joinMessage.instanceID + "-" + joinMessage.shardID + ") doesn't run on this server!");
+                            throw new IllegalStateException("region (" + joinMessage.regionID + "-" + joinMessage.instanceID + "-" + joinMessage.shardID + ") doesn't run on this server!");
+                        }
+
+                        Log.d(LOG_TAG, "region container exists: " + regionContainer);
+
+                        Log.d(LOG_TAG, "initialize player now...");
+
+                        //initialize player on container
+                        User user = new User(joinMessage.userID, joinMessage.username, joinMessage.listGroups());
+                        this.regionContainer.initPlayer(user, joinMessage.cid, this.conn);
+
+                        Log.i(LOG_TAG, "user '" + joinMessage.username + "' is authentificated now!");
+
+                        this.authentificated = true;
+                    } else {
+                        Log.w(AUTH_TAG, "cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");
+                        conn.disconnect();
+
+                        throw new WrongClusterCredentialsException("cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");
                     }
-
-                    //initialize player on container
-                    User user = new User(joinMessage.userID, joinMessage.username, joinMessage.listGroups());
-                    this.regionContainer.initPlayer(user, joinMessage.cid, this.conn);
-
-                    Log.i(LOG_TAG, "user '" + joinMessage.username + "' is authentificated now!");
-
-                    this.authentificated = true;
                 } else {
-                    Log.w(AUTH_TAG, "cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");
-                    conn.disconnect();
+                    //drop message, because proxy isn't authentificated
+                    Log.w(LOG_TAG, "Drop message with type " + type + ", extendedType: " + extendedType + " because proxy isn't authentificated yet.");
 
-                    throw new WrongClusterCredentialsException("cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");
+                    throw new UnauthentificatedException("Drop message with type " + type + ", extendedType: " + extendedType + " because proxy isn't authentificated yet.");
                 }
             } else {
-                //drop message, because proxy isn't authentificated
-                Log.w(LOG_TAG, "Drop message with type " + type + ", extendedType: " + extendedType + " because proxy isn't authentificated yet.");
-
-                throw new UnauthentificatedException("Drop message with type " + type + ", extendedType: " + extendedType + " because proxy isn't authentificated yet.");
+                //redirect message to region
+                this.regionContainer.receive(buffer, conn);
             }
-        } else {
-            //redirect message to region
-            this.regionContainer.receive(buffer, conn);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Exception in method ClientInitializer.onMessage(): ", e);
+            throw e;
         }
     }
 
