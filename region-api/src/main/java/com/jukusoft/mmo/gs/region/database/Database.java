@@ -12,6 +12,7 @@ import io.vertx.ext.sql.SQLClient;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class Database {
@@ -99,14 +100,26 @@ public class Database {
     }
 
     public static Connection getConnection (String name) throws SQLException {
+        Objects.requireNonNull(name);
+
         if (name.equals("main")) {
             return dataSource.getConnection();
         } else {
-            return dataSourceMap.get(name).getConnection();
+            if (dataSourceMap.containsKey(name)) {
+                return dataSourceMap.get(name).getConnection();
+            } else {
+                throw new IllegalArgumentException("client with name '" + name + "' doesn't exists!");
+            }
         }
     }
 
+    public static DBClient getClient () {
+        return getClient("main");
+    }
+
     public static DBClient getClient (String name) {
+        Objects.requireNonNull(name);
+
         try {
             Connection connection = getConnection(name);
             return new SimpleDBClient(connection, mySQLConfig.getPrefix());

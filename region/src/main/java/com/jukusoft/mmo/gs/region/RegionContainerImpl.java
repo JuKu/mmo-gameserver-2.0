@@ -240,16 +240,16 @@ public class RegionContainerImpl implements RegionContainer {
                 statement.setLong(1, this.regionID);
                 statement.setInt(2, this.instanceID);
 
-                // execute select SQL stetement
-                ResultSet rs = statement.executeQuery();
-
                 int counter = 0;
 
-                while (rs.next()) {
-                    this.regionTitle = rs.getString("title");
-                    this.locked = rs.getInt("locked") == 1;
+                // execute select SQL stetement
+                try (ResultSet rs = statement.executeQuery()) {
+                    while (rs.next()) {
+                        this.regionTitle = rs.getString("title");
+                        this.locked = rs.getInt("locked") == 1;
 
-                    counter++;
+                        counter++;
+                    }
                 }
 
                 if (counter <= 0) {

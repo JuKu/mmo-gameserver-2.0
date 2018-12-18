@@ -82,6 +82,30 @@ public class DatabaseTest {
         assertEquals("SELECT * FROM `mmo_users`; ", query);
     }
 
+    @Test (expected = IllegalArgumentException.class)
+    public void testGetClientWithUnknownName () throws IOException {
+        //load test mysql configuration
+        MySQLConfig mySQLConfig = createConfig();
+
+        //initialize database
+        Database.init(vertx, mySQLConfig);
+
+        Database.getClient("not-existent-name");
+    }
+
+    @Test
+    public void testGetClient () throws IOException {
+        //load test mysql configuration
+        MySQLConfig mySQLConfig = createConfig();
+
+        //initialize database
+        Database.init("static", vertx, mySQLConfig);
+        Database.init(vertx, mySQLConfig);
+
+        assertNotNull(Database.getClient("static"));
+        assertNotNull(Database.getClient());
+    }
+
     protected MySQLConfig createConfig () throws IOException {
         //clear in-memory config first
         Config.clear();
