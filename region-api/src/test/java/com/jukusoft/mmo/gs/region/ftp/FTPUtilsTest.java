@@ -180,63 +180,6 @@ public class FTPUtilsTest {
         ftpClient.quit(new DummyHandler<>());
     }
 
-    /*@Test
-    public void testRecursiveListFiles () throws InterruptedException {
-        //create ftp connection
-        FtpClient ftpClient = FTPFactory.createSync();
-        assertNotNull(ftpClient);
-
-        String remoteDir = Config.get("FTP", "regionsDir") + "/region_1_1/";
-
-        CountDownLatch latch = new CountDownLatch(1);
-
-        List<String> dirList = new ArrayList<>();
-        List<String> fileList = new ArrayList<>();
-
-        FTPUtils.recursiveListFiles(ftpClient, remoteDir, latch, dirList, fileList, "", event -> {
-            //
-        });
-
-        latch.await(10000, TimeUnit.MILLISECONDS);
-
-        assertEquals(true, dirList.size() > 0);
-        assertEquals(true, fileList.size() > 0);
-
-        ftpClient.quit(new DummyHandler<>());
-    }*/
-
-    //@Test
-    public void testDownloadFiles () throws InterruptedException {
-        //create ftp connection
-        FtpClient ftpClient = FTPFactory.createSync();
-        assertNotNull(ftpClient);
-
-        String localDir = Cache.getInstance().getCachePath("junit-ftp-tests") + "ftp-mirror/";
-        new File(localDir).mkdirs();
-
-        String remoteDir = Config.get("FTP", "regionsDir") + "/region_1_1";
-        System.err.println("testDownloadFiles: " + remoteDir);
-
-        assertEquals(false, new File(Cache.getInstance().getCachePath("junit-ftp-tests") + "my-test.txt").exists());
-
-        CountDownLatch latch = new CountDownLatch(1);
-
-        //TODO: download files
-        FTPUtils.downloadDir(ftpClient, remoteDir, localDir, new Handler<Boolean>() {
-            @Override
-            public void handle(Boolean event) {
-                latch.countDown();
-            }
-        });
-
-        latch.await();
-
-        assertEquals(true, new File(Cache.getInstance().getCachePath("junit-ftp-tests") + "my-test.txt").exists());
-
-        //close ftp connection
-        ftpClient.quit(new DummyHandler<>());
-    }
-
     @Test
     public void testFtpFile () {
         assertNotNull(FTPFile.from("drwxr-xr-x   2 user MMORPG       4096 Dec 15 00:38 server"));
