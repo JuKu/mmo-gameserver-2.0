@@ -27,6 +27,14 @@ public interface RegionContainer {
     public void initPlayer(User user, int cid, RemoteConnection conn);
 
     /**
+    * player has closed the connection, so logout player
+     *
+     * @param user user instance
+     * @param cid character id
+    */
+    public void logoutPlayer(User user, int cid);
+
+    /**
     * receive network message
      *
      * @param buffer network message

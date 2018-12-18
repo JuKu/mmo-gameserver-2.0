@@ -25,6 +25,7 @@ public class ClientInitializer implements CustomClientInitializer {
 
     protected RemoteConnection conn = null;
     protected ConnState state = new ConnState();
+    protected User user = null;
 
     protected final RegionManager regionManager;
 
@@ -57,6 +58,13 @@ public class ClientInitializer implements CustomClientInitializer {
 
     protected void onClose (RemoteConnection conn) {
         Log.i(LOG_TAG, "proxy connection closed: " + conn.remoteHost() + ":" + conn.remotePort());
+
+        if (this.regionContainer != null) {
+            Log.i(LOG_TAG, "logout player '" + this.user.getUsername() + "' (userID: " + this.user.getUserID() + ") with characterID " + this.state.getCID() + " now...");
+            this.regionContainer.logoutPlayer(this.user, this.state.getCID());
+        }
+
+        this.state = null;
     }
 
     protected void onMessage (Buffer buffer, RemoteConnection conn) {
@@ -108,7 +116,7 @@ public class ClientInitializer implements CustomClientInitializer {
                         Log.d(LOG_TAG, "initialize player now...");
 
                         //initialize player on container
-                        User user = new User(joinMessage.userID, joinMessage.username, joinMessage.listGroups());
+                        this.user = new User(joinMessage.userID, joinMessage.username, joinMessage.listGroups());
                         this.regionContainer.initPlayer(user, joinMessage.cid, this.conn);
 
                         Log.i(LOG_TAG, "user '" + joinMessage.username + "' is authentificated now!");

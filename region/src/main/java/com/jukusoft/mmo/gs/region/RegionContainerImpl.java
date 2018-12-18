@@ -186,6 +186,11 @@ public class RegionContainerImpl implements RegionContainer {
         this.initPlayer(player);
     }
 
+    @Override
+    public void logoutPlayer(User user, int cid) {
+        //TODO: add code here
+    }
+
     private void initPlayer (PlayerTuple player) {
         Log.i(LOG_TAG, "initPlayer(): " + player);
 

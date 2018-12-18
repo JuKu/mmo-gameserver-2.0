@@ -8,6 +8,8 @@ import com.jukusoft.mmo.engine.shared.config.Cache;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.logger.LogWriter;
+import com.jukusoft.mmo.engine.shared.messages.JoinRegionMessage;
+import com.jukusoft.mmo.engine.shared.messages.LoadMapResponse;
 import com.jukusoft.mmo.engine.shared.utils.FileUtils;
 import com.jukusoft.mmo.engine.shared.utils.Utils;
 import com.jukusoft.mmo.engine.shared.version.Version;
@@ -20,6 +22,7 @@ import com.jukusoft.mmo.gs.region.RegionManagerImpl;
 import com.jukusoft.mmo.gs.region.ftp.FTPFactory;
 import com.jukusoft.mmo.gs.region.ftp.NFtpFactory;
 import com.jukusoft.vertx.connection.clientserver.TCPServer;
+import com.jukusoft.vertx.serializer.TypeLookup;
 import io.github.bckfnn.ftp.FtpClient;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -175,6 +178,10 @@ public class ServerMain {
         //start tcp server
         TCPServer server = new TCPServer();
         server.init(vertx);
+
+        //register message types
+        TypeLookup.register(JoinRegionMessage.class);
+        TypeLookup.register(LoadMapResponse.class);
 
         RegionManager regionManager = new RegionManagerImpl();
 
