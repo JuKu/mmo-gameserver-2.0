@@ -10,11 +10,21 @@ import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+* factory class to create ftp connections
+ *
+ * @deprecated use <code>NFtpFactory</code> instead
+*/
 @Deprecated
 public class FTPFactory {
 
     protected static final String LOG_TAG = "FTP";
     protected static final String CONFIG_SECTION = "FTP";
+
+    protected static final String HOST_KEY = "host";
+    protected static final String PORT_KEY = "port";
+    protected static final String USERNAME_KEY = "username";
+    protected static final String PASSWORD_KEY = "password";
 
     protected static Vertx vertx = null;
 
@@ -35,7 +45,6 @@ public class FTPFactory {
         FtpClient client = new FtpClient(vertx, host, port);
         client.connect(connectRes -> {
             if (!connectRes.succeeded()) {
-                System.err.println("Coulnd't connect to ftp server: " + connectRes.cause());
                 connectRes.cause().printStackTrace();
                 Log.w(LOG_TAG, "Coulnd't connect to ftp server: ", connectRes.cause());
 
@@ -46,8 +55,6 @@ public class FTPFactory {
 
             client.login(user, password, loginRes -> {
                 if (!loginRes.succeeded()) {
-                    System.err.println("Coulnd't login on ftp server: " + connectRes.cause());
-
                     if (loginRes.cause() != null) {
                         loginRes.cause().printStackTrace();
                     }
@@ -65,19 +72,19 @@ public class FTPFactory {
     }
 
     public static void create (CountDownLatch latch, Handler<FtpClient> handler) {
-        create(Config.get(CONFIG_SECTION, "host"), Config.getInt(CONFIG_SECTION, "port"), Config.get(CONFIG_SECTION, "username"), Config.get(CONFIG_SECTION, "password"), latch, handler);
+        create(Config.get(CONFIG_SECTION, HOST_KEY), Config.getInt(CONFIG_SECTION, PORT_KEY), Config.get(CONFIG_SECTION, USERNAME_KEY), Config.get(CONFIG_SECTION, PASSWORD_KEY), latch, handler);
     }
 
     public static void createAsync (Handler<FtpClient> handler) {
         CountDownLatch latch = new CountDownLatch(1);
-        create(Config.get(CONFIG_SECTION, "host"), Config.getInt(CONFIG_SECTION, "port"), Config.get(CONFIG_SECTION, "username"), Config.get(CONFIG_SECTION, "password"), latch, handler);
+        create(Config.get(CONFIG_SECTION, HOST_KEY), Config.getInt(CONFIG_SECTION, PORT_KEY), Config.get(CONFIG_SECTION, USERNAME_KEY), Config.get(CONFIG_SECTION, PASSWORD_KEY), latch, handler);
     }
 
     public static FtpClient createSync () {
         CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<FtpClient> ar = new AtomicReference<>();
 
-        create(Config.get(CONFIG_SECTION, "host"), Config.getInt(CONFIG_SECTION, "port"), Config.get(CONFIG_SECTION, "username"), Config.get(CONFIG_SECTION, "password"), latch, event -> ar.set(event));
+        create(Config.get(CONFIG_SECTION, HOST_KEY), Config.getInt(CONFIG_SECTION, PORT_KEY), Config.get(CONFIG_SECTION, USERNAME_KEY), Config.get(CONFIG_SECTION, PASSWORD_KEY), latch, event -> ar.set(event));
 
         try {
             latch.await();
