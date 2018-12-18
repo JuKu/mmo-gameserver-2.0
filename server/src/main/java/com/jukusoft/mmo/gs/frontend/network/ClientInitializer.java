@@ -60,6 +60,8 @@ public class ClientInitializer implements CustomClientInitializer {
     }
 
     protected void onMessage (Buffer buffer, RemoteConnection conn) {
+        this.conn = conn;
+
         Log.v(LOG_TAG, "message from proxy server received with type " + ByteUtils.byteToHex(buffer.getByte(0)) + ", extendedType: " + ByteUtils.byteToHex(buffer.getByte(1)) + ".");
 
         byte type = buffer.getByte(0);

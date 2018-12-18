@@ -12,8 +12,8 @@ public class PlayerTuple {
     public final RemoteConnection conn;
 
     public PlayerTuple (User user, int cid, RemoteConnection conn) {
-        Objects.requireNonNull(user);
-        Objects.requireNonNull(conn);
+        Objects.requireNonNull(user, "user cannot be null.");
+        Objects.requireNonNull(conn, "conn cannot be null.");
 
         this.user = user;
         this.cid = cid;

@@ -116,6 +116,9 @@ public class RegionContainerImpl implements RegionContainer {
 
     @Override
     public void initPlayer(User user, int cid, RemoteConnection conn) {
+        Objects.requireNonNull(user, "user cannot be null.");
+        Objects.requireNonNull(conn, "conn cannot be null.");
+
         Log.i(LOG_TAG, "init player '" + user.getUsername() + "' (userID: " + user.getUserID() + ") with characterID " + cid);
         PlayerTuple player = new PlayerTuple(user, cid, conn);
 
