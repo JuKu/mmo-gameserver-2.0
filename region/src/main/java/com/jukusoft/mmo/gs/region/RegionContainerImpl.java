@@ -205,6 +205,10 @@ public class RegionContainerImpl implements RegionContainer {
             response.addRequiredMap(entry.getKey(), entry.getValue());
         }
 
+        //TODO: load character data
+
+        //TODO: load last character position from database (if it not exists --> character has joined the first time to this game)
+
         Log.d(LOG_TAG, "send LoadMapResponse to client.");
 
         //send message back to client
