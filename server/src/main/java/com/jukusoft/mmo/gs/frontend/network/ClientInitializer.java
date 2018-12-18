@@ -10,7 +10,7 @@ import io.netty.util.collection.LongObjectMap;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class ClientInitializerFactory implements CustomClientInitializer {
+public class ClientInitializer implements CustomClientInitializer {
 
     protected static final int EXPECTED_CONNECTIONS = 100;
     protected static final int LOAD_FACTOR = 100;
@@ -24,7 +24,7 @@ public class ClientInitializerFactory implements CustomClientInitializer {
      *
      * @param regionManager singleton instance of region manager
      */
-    public ClientInitializerFactory (RegionManager regionManager) {
+    public ClientInitializer(RegionManager regionManager) {
         Objects.requireNonNull(regionManager);
         this.regionManager = regionManager;
     }
