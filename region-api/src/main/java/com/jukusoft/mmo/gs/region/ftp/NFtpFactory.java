@@ -32,6 +32,7 @@ public class NFtpFactory {
             throw new IllegalStateException("initialize FTPFactory with FTPFactory.init() call first!");
         }
 
+        //https://www.rhymewithgravy.com/2016/10/18/Vertx-and-Blocking-Code.html
         vertx.executeBlocking((Handler<Future<FTPClient>>) future -> {
             try {
                 FTPClient ftpClient = new FTPClient();
