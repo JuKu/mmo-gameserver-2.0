@@ -200,6 +200,8 @@ public class RegionContainerImpl implements RegionContainer {
             response.addRequiredMap(entry.getKey(), entry.getValue());
         }
 
+        Log.d(LOG_TAG, "send LoadMapResponse to client.");
+
         //send message back to client
         player.conn.send(response);
     }
