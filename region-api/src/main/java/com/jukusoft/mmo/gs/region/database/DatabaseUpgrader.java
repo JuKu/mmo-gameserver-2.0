@@ -1,4 +1,4 @@
-package com.jukusoft.mmo.gs.frontend.database;
+package com.jukusoft.mmo.gs.region.database;
 
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import org.flywaydb.core.Flyway;

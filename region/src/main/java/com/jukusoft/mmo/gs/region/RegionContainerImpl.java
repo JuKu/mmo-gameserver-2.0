@@ -88,7 +88,8 @@ public class RegionContainerImpl implements RegionContainer {
         //download files for region from ftp server
         this.downloadFilesFromFtp();
 
-        //load region data from static database
+        //load static region data from static database (they are fixed and cannot be changed at runtime - only with updates)
+        //Database
 
         this.initialized = true;
     }

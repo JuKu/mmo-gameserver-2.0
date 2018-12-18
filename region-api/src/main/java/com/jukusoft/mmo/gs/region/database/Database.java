@@ -1,4 +1,4 @@
-package com.jukusoft.mmo.gs.frontend.database;
+package com.jukusoft.mmo.gs.region.database;
 
 import com.carrotsearch.hppc.ObjectObjectHashMap;
 import com.carrotsearch.hppc.ObjectObjectMap;

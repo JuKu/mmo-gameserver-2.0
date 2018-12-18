@@ -1,6 +1,7 @@
-package com.jukusoft.mmo.gs.frontend.database;
+package com.jukusoft.mmo.gs.region.database;
 
 import com.jukusoft.mmo.engine.shared.config.Config;
+import com.jukusoft.mmo.gs.region.database.MySQLConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

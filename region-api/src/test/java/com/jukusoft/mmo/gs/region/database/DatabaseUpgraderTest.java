@@ -1,6 +1,8 @@
-package com.jukusoft.mmo.gs.frontend.database;
+package com.jukusoft.mmo.gs.region.database;
 
 import com.jukusoft.mmo.engine.shared.config.Config;
+import com.jukusoft.mmo.gs.region.database.DatabaseUpgrader;
+import com.jukusoft.mmo.gs.region.database.MySQLConfig;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.*;
 import org.junit.AfterClass;
