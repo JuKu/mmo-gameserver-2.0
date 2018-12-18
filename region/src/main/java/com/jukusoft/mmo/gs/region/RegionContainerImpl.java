@@ -3,11 +3,13 @@ package com.jukusoft.mmo.gs.region;
 import com.jukusoft.mmo.engine.shared.config.Cache;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
-import com.jukusoft.mmo.gs.region.ftp.FTPFactory;
+import com.jukusoft.mmo.gs.region.ftp.FTPUtil;
+import com.jukusoft.mmo.gs.region.ftp.NFtpFactory;
 import com.jukusoft.mmo.gs.region.user.User;
-import com.jukusoft.mmo.gs.region.ftp.FTPUtils;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import io.vertx.core.buffer.Buffer;
+
+import java.io.IOException;
 
 public class RegionContainerImpl implements RegionContainer {
 
@@ -23,6 +25,7 @@ public class RegionContainerImpl implements RegionContainer {
 
     protected boolean initialized = false;
     protected boolean ftpFilesLoaded = false;
+
 
     public RegionContainerImpl (long regionID, int instanceID, int shardID) {
         if (regionID <= 0) {
@@ -50,21 +53,22 @@ public class RegionContainerImpl implements RegionContainer {
     public void init() {
         Log.i(LOG_TAG, "initialize region...");
 
+        //connect to ftp server
+
         Log.d(LOG_TAG, "download region files from ftp server...");
-        FTPFactory.createAsync(ftpClient -> {
+        NFtpFactory.createAsync(ftpClient -> {
             String remoteDir = Config.get("FTP", "regionsDir") + "/region_" + +regionID + "_" + instanceID;
             Log.d(LOG_TAG, "try to download remote ftp directory: " + remoteDir);
 
-            FTPUtils.downloadDir(ftpClient, remoteDir, this.cachePath, res -> {
-                if (!res) {
-                    Log.e(LOG_TAG, "Coulnd't download region files for region " + this.regionID + ", instanceID: " + this.instanceID + "!");
+            try {
+                FTPUtil.downloadDirectory(ftpClient, remoteDir, this.cachePath);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Coulnd't download region files for region " + this.regionID + ", instanceID: " + this.instanceID + "!", e);
+                return;
+            }
 
-                    //TODO: disconnect all players and restart region
-                } else {
-                    ftpFilesLoaded = true;
-                    Log.d(LOG_TAG, "all ftp files received for region and stored in cache.");
-                }
-            });
+            ftpFilesLoaded = true;
+            Log.d(LOG_TAG, "all ftp files received for region and stored in cache.");
         });
 
         this.initialized = true;

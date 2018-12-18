@@ -18,12 +18,14 @@ import com.jukusoft.mmo.gs.frontend.utils.*;
 import com.jukusoft.mmo.gs.region.RegionManager;
 import com.jukusoft.mmo.gs.region.RegionManagerImpl;
 import com.jukusoft.mmo.gs.region.ftp.FTPFactory;
+import com.jukusoft.mmo.gs.region.ftp.NFtpFactory;
 import com.jukusoft.vertx.connection.clientserver.TCPServer;
 import io.github.bckfnn.ftp.FtpClient;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
+import org.apache.commons.net.ftp.FTPClient;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -135,6 +137,7 @@ public class ServerMain {
 
         //check ftp connection
         FTPFactory.init(vertx);
+        NFtpFactory.init(vertx);
 
         //check ftp connection
         Log.i(FTP_TAG, "check ftp connection...");
@@ -150,6 +153,18 @@ public class ServerMain {
                 //don't do anything here
             });
         }
+
+        /*FTPClient ftpClient = NFtpFactory.createSync();
+
+        if (ftpClient == null) {
+            throw new IllegalStateException("Coulnd't connect and login on ftp server...");
+        } else {
+            Log.i(FTP_TAG, "connection to ftp server was successfully!");
+
+            //close ftp connection now, because we don't need it yet
+            ftpClient.logout();
+            ftpClient.disconnect();
+        }*/
 
         //get host (interface) and port from config
         String host = Config.get(SECTION_NAME, "host");

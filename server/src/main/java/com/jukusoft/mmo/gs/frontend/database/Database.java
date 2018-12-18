@@ -12,7 +12,6 @@ import io.vertx.ext.sql.SQLClient;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class Database {

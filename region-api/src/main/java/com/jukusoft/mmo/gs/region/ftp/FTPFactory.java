@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Deprecated
 public class FTPFactory {
 
     protected static final String LOG_TAG = "FTP";
@@ -46,7 +47,11 @@ public class FTPFactory {
             client.login(user, password, loginRes -> {
                 if (!loginRes.succeeded()) {
                     System.err.println("Coulnd't login on ftp server: " + connectRes.cause());
-                    connectRes.cause().printStackTrace();
+
+                    if (loginRes.cause() != null) {
+                        loginRes.cause().printStackTrace();
+                    }
+
                     Log.w(LOG_TAG, "Coulnd't login on ftp server: ", connectRes.cause());
                     handler.handle(null);
                     latch.countDown();
