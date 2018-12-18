@@ -13,11 +13,10 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ClientInitializer implements CustomClientInitializer {
 
     protected static final int EXPECTED_CONNECTIONS = 100;
-    protected static final float LOAD_FACTOR = 100;
 
     protected final RegionManager regionManager;
     protected final AtomicLong lastConnID = new AtomicLong(0);
-    protected final LongObjectMap<ClientHandler> connections = new LongObjectHashMap<>(EXPECTED_CONNECTIONS, LOAD_FACTOR);
+    protected final LongObjectMap<ClientHandler> connections = new LongObjectHashMap<>(EXPECTED_CONNECTIONS);
 
     /**
      * default constructor
