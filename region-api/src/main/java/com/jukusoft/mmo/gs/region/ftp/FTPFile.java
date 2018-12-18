@@ -1,10 +1,7 @@
 package com.jukusoft.mmo.gs.region.ftp;
 
 import com.jukusoft.mmo.engine.shared.logger.Log;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

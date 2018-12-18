@@ -7,8 +7,12 @@ import io.vertx.core.Handler;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
 
+/**
+* utils class to create directories or download files
+ *
+ * @deprecated because of introduction of <code>FtpUtil</code> class, use this class instead
+*/
 @Deprecated
 public class FTPUtils {
 
