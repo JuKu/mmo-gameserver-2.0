@@ -106,6 +106,8 @@ public class ClientInitializer implements CustomClientInitializer {
                     User user = new User(joinMessage.userID, joinMessage.username, joinMessage.listGroups());
                     this.regionContainer.initPlayer(user, joinMessage.cid, this.conn);
 
+                    Log.i(LOG_TAG, "user '" + joinMessage.username + "' is authentificated now!");
+
                     this.authentificated = true;
                 } else {
                     Log.w(AUTH_TAG, "cluster credentials are wrong for username '" + joinMessage.cluster_username + "', close connection now.");

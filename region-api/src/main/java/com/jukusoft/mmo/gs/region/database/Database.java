@@ -106,6 +106,16 @@ public class Database {
         }
     }
 
+    public static DBClient getClient (String name) {
+        try {
+            Connection connection = getConnection(name);
+            return new SimpleDBClient(connection, mySQLConfig.getPrefix());
+        } catch (SQLException e) {
+            Log.e(LOG_TAG, "Cannot get DBClient: ", e);
+            throw new IllegalStateException("Cannot get DBClient: ", e);
+        }
+    }
+
     public static void close () {
         dataSource.close();
 

@@ -26,7 +26,14 @@ public class RegionManagerImpl implements RegionManager {
         Log.i(LOG_TAG, "start new region " + regionID + ", instanceID: " + instanceID + ", shardID: " + shardID + " on this gameserver instance.");
 
         RegionContainer container = new RegionContainerImpl(regionID, instanceID, shardID);
-        container.init();
+
+        try {
+            container.init();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Cannot start region " + regionID + ", instanceID: " + instanceID + ", shardID: " + shardID + " caused by an exception: ", e);
+            handler.handle(null);
+            return;
+        }
 
         this.regions.add(container);
         this.regionMap.put(RegionCoordUtils.hash(regionID, instanceID, shardID), container);

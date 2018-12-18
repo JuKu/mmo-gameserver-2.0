@@ -7,6 +7,9 @@ import com.jukusoft.mmo.engine.shared.memory.Pools;
 import com.jukusoft.mmo.engine.shared.messages.LoadMapResponse;
 import com.jukusoft.mmo.engine.shared.utils.FileUtils;
 import com.jukusoft.mmo.engine.shared.utils.HashUtils;
+import com.jukusoft.mmo.gs.region.database.DBClient;
+import com.jukusoft.mmo.gs.region.database.Database;
+import com.jukusoft.mmo.gs.region.database.InvalideDatabaseException;
 import com.jukusoft.mmo.gs.region.ftp.FTPUtil;
 import com.jukusoft.mmo.gs.region.ftp.NFtpFactory;
 import com.jukusoft.mmo.gs.region.user.User;
@@ -16,6 +19,8 @@ import io.vertx.core.buffer.Buffer;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Lock;
@@ -30,8 +35,9 @@ public class RegionContainerImpl implements RegionContainer {
     protected final int instanceID;
     protected final int shardID;
 
-    //region name
+    //region attributes from static db
     protected String regionTitle = "";
+    protected boolean locked = false;
 
     //cache path
     protected final String cachePath;
@@ -45,6 +51,8 @@ public class RegionContainerImpl implements RegionContainer {
     //queue with players which have connected while region was in initialization process
     protected Queue<PlayerTuple> waitingPlayerInitQueue = new ConcurrentLinkedQueue<>();
 
+    //sql queries
+    protected static final String SQL_GET_REGION = "SELECT * FROM `{prefix}regions` WHERE `regionID` = ? AND `instanceID` = ?; ";
 
     public RegionContainerImpl (long regionID, int instanceID, int shardID) {
         if (regionID <= 0) {
@@ -89,7 +97,11 @@ public class RegionContainerImpl implements RegionContainer {
         this.downloadFilesFromFtp();
 
         //load static region data from static database (they are fixed and cannot be changed at runtime - only with updates)
-        //Database
+        this.loadStaticDataFromDB();
+
+        //TODO: load scripts and so on
+
+        Log.i(LOG_TAG, "initialized region '" + this.regionTitle + "' successfully!");
 
         this.initialized = true;
     }
@@ -215,6 +227,39 @@ public class RegionContainerImpl implements RegionContainer {
 
             this.fileHashes.put(filePath, fileHash);
         }
+    }
+
+    protected void loadStaticDataFromDB () {
+        Log.i(LOG_TAG, "load static data from db...");
+
+        try (DBClient dbClient = Database.getClient("static")) {
+            try (PreparedStatement statement = dbClient.prepareStatement(SQL_GET_REGION)) {
+                //set params
+                statement.setLong(1, this.regionID);
+                statement.setInt(2, this.instanceID);
+
+                // execute select SQL stetement
+                ResultSet rs = statement.executeQuery();
+
+                int counter = 0;
+
+                while (rs.next()) {
+                    this.regionTitle = rs.getString("title");
+                    this.locked = rs.getInt("locked") == 1;
+
+                    counter++;
+                }
+
+                if (counter <= 0) {
+                    throw new InvalideDatabaseException("regionID " + this.regionID + ", instanceID: " + this.instanceID + " doesn't exists in database!");
+                }
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Cannot initialize region, because of SQLException while loading region static data from db: ", e);
+            return;
+        }
+
+        Log.i(LOG_TAG, "loaded static data successfully!");
     }
 
 }
