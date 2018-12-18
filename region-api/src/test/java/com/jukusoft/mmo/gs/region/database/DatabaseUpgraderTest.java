@@ -168,7 +168,6 @@ public class DatabaseUpgraderTest {
 
         DatabaseUpgrader databaseUpgrader = new DatabaseUpgrader(mySQLConfig);
         databaseUpgrader.migrate();
-
     }
 
 }
