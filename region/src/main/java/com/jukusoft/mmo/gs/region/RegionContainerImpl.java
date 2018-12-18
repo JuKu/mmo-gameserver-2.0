@@ -3,6 +3,8 @@ package com.jukusoft.mmo.gs.region;
 import com.jukusoft.mmo.engine.shared.config.Cache;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
+import com.jukusoft.mmo.engine.shared.memory.Pools;
+import com.jukusoft.mmo.engine.shared.messages.LoadMapResponse;
 import com.jukusoft.mmo.engine.shared.utils.FileUtils;
 import com.jukusoft.mmo.engine.shared.utils.HashUtils;
 import com.jukusoft.mmo.gs.region.ftp.FTPUtil;
@@ -27,6 +29,9 @@ public class RegionContainerImpl implements RegionContainer {
     protected final long regionID;
     protected final int instanceID;
     protected final int shardID;
+
+    //region name
+    protected String regionTitle = "";
 
     //cache path
     protected final String cachePath;
@@ -82,6 +87,8 @@ public class RegionContainerImpl implements RegionContainer {
 
         //download files for region from ftp server
         this.downloadFilesFromFtp();
+
+        //load region data from static database
 
         this.initialized = true;
     }
@@ -169,7 +176,19 @@ public class RegionContainerImpl implements RegionContainer {
     private void initPlayer (PlayerTuple player) {
         Log.i(LOG_TAG, "initPlayer(): " + player);
 
-        //TODO: send response to proxy / client
+        //send response to proxy / client
+        LoadMapResponse response = Pools.get(LoadMapResponse.class);
+        response.regionID = this.regionID;
+        response.instanceID = this.instanceID;
+        response.regionTitle = this.regionTitle;
+
+        //add all required files with file checksums, so client can check, if map files are up to date
+        for (Map.Entry<String,String> entry : this.fileHashes.entrySet()) {
+            response.addRequiredMap(entry.getKey(), entry.getValue());
+        }
+
+        //TODO: add code here
+        //player.conn.send(response);
     }
 
     @Override
