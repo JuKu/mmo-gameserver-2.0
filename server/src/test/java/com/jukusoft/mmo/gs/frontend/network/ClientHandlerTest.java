@@ -155,6 +155,26 @@ public class ClientHandlerTest {
         assertEquals(true, b.get());
     }
 
+    @Test (expected = RuntimeException.class)
+    public void testOnMessageRedirectWithException () {
+        ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
+        initializer.authentificated = true;
+        initializer.user = new User(1, "test", new ArrayList<>());
+
+        initializer.regionContainer = Mockito.mock(RegionContainer.class);
+        Mockito.when(initializer.regionContainer.isInitialized()).thenReturn(true);
+        Mockito.doAnswer(invocation -> {
+            throw new IllegalStateException("test exception");
+        }).when(initializer.regionContainer).receive(any(Buffer.class), any(User.class), anyInt(), any(RemoteConnection.class));
+
+        //create example message
+        Buffer buffer = Buffer.buffer();
+        buffer.appendByte((byte) 0x01);
+        buffer.appendByte((byte) 0x02);
+
+        initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
+    }
+
     @Test (expected = WrongClusterCredentialsException.class)
     public void testHandleJoinMessageWithWrongCredentials () {
         ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
