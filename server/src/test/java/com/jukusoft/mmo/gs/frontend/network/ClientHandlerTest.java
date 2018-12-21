@@ -133,7 +133,7 @@ public class ClientHandlerTest {
                 b.set(true);
                 return null;
             }
-        }).when(initializer.regionContainer).receive(any(Buffer.class), any(RemoteConnection.class));
+        }).when(initializer.regionContainer).receive(any(Buffer.class), any(User.class), anyInt(), any(RemoteConnection.class));
 
         //create example message
         Buffer buffer = Buffer.buffer();

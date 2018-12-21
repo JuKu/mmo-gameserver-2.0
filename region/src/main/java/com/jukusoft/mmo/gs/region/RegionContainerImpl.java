@@ -12,9 +12,14 @@ import com.jukusoft.mmo.gs.region.database.Database;
 import com.jukusoft.mmo.gs.region.database.InvalideDatabaseException;
 import com.jukusoft.mmo.gs.region.ftp.FTPUtil;
 import com.jukusoft.mmo.gs.region.ftp.NFtpFactory;
+import com.jukusoft.mmo.gs.region.network.NetHandlerManager;
+import com.jukusoft.mmo.gs.region.network.NetMessageHandler;
 import com.jukusoft.mmo.gs.region.user.User;
 import com.jukusoft.mmo.gs.region.utils.PlayerTuple;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
+import com.jukusoft.vertx.serializer.SerializableObject;
+import com.jukusoft.vertx.serializer.Serializer;
+import com.jukusoft.vertx.serializer.utils.ByteUtils;
 import io.vertx.core.buffer.Buffer;
 
 import java.io.File;
@@ -50,6 +55,9 @@ public class RegionContainerImpl implements RegionContainer {
 
     //queue with players which have connected while region was in initialization process
     protected Queue<PlayerTuple> waitingPlayerInitQueue = new ConcurrentLinkedQueue<>();
+
+    //message handler manager
+    private final NetHandlerManager handlerManager = new NetHandlerManager();
 
     //sql queries
     protected static final String SQL_GET_REGION = "SELECT * FROM `{prefix}regions` WHERE `regionID` = ? AND `instanceID` = ?; ";
@@ -98,6 +106,8 @@ public class RegionContainerImpl implements RegionContainer {
 
         //load static region data from static database (they are fixed and cannot be changed at runtime - only with updates)
         this.loadStaticDataFromDB();
+
+        //TODO: register message handlers
 
         //TODO: load scripts and so on
 
@@ -217,7 +227,22 @@ public class RegionContainerImpl implements RegionContainer {
 
     @Override
     public void receive(Buffer buffer, User user, int cid, RemoteConnection conn) {
-        throw new UnsupportedOperationException("method isn't implemented yet.");
+        //unserialize message
+        SerializableObject object = Serializer.unserialize(buffer);
+
+        NetMessageHandler handler = handlers().findHandler(object.getClass());
+
+        if (handler == null) {
+            Log.w(LOG_TAG, "no handler is registered for message type " + ByteUtils.byteToHex(buffer.getByte(0)) + ", extendedType: " + ByteUtils.byteToHex(buffer.getByte(1)));
+            throw new UnsupportedOperationException("no handler is registered for message type " + ByteUtils.byteToHex(buffer.getByte(0)) + ", extendedType: " + ByteUtils.byteToHex(buffer.getByte(1)));
+        }
+
+        //call handler
+        handler.receive(object, user, cid, conn);
+    }
+
+    protected NetHandlerManager handlers() {
+        return this.handlerManager;
     }
 
     protected void indexClientCache () throws Exception {
