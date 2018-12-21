@@ -141,8 +141,12 @@ public class ClientHandler implements CustomClientInitializer {
                     throw new UnauthentificatedException("Drop message with type " + type + ", extendedType: " + extendedType + " because proxy isn't authentificated yet.");
                 }
             } else {
-                //redirect message to region
-                this.regionContainer.receive(buffer, conn);
+                try {
+                    //redirect message to region
+                    this.regionContainer.receive(buffer, conn);
+                } catch (Exception e) {
+                    Log.w(LOG_TAG, "Exception in region container while receiving message: ", e);
+                }
             }
         } catch (Exception e) {
             Log.e(LOG_TAG, "Exception in method ClientHandler.onMessage(): ", e);
