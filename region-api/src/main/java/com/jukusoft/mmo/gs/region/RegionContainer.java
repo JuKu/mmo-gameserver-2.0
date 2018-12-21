@@ -40,6 +40,6 @@ public interface RegionContainer {
      * @param buffer network message
      * @param conn network connection to client (will be redirected automatically from proxy server)
     */
-    public void receive(Buffer buffer, RemoteConnection conn);
+    public void receive(Buffer buffer, User user, int cid, RemoteConnection conn);
 
 }

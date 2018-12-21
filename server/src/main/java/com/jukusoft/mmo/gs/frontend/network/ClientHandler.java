@@ -143,7 +143,7 @@ public class ClientHandler implements CustomClientInitializer {
             } else {
                 try {
                     //redirect message to region
-                    this.regionContainer.receive(buffer, conn);
+                    this.regionContainer.receive(buffer, user, state.getCID(), conn);
                 } catch (Exception e) {
                     Log.w(LOG_TAG, "Exception in region container while receiving message: ", e);
                 }

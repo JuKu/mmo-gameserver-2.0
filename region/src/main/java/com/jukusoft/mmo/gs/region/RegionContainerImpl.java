@@ -216,7 +216,7 @@ public class RegionContainerImpl implements RegionContainer {
     }
 
     @Override
-    public void receive(Buffer buffer, RemoteConnection conn) {
+    public void receive(Buffer buffer, User user, int cid, RemoteConnection conn) {
         throw new UnsupportedOperationException("method isn't implemented yet.");
     }
 
