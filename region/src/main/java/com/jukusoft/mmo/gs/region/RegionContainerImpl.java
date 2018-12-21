@@ -4,6 +4,7 @@ import com.jukusoft.mmo.engine.shared.config.Cache;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.memory.Pools;
+import com.jukusoft.mmo.engine.shared.messages.DownloadRegionFilesRequest;
 import com.jukusoft.mmo.engine.shared.messages.LoadMapResponse;
 import com.jukusoft.mmo.engine.shared.utils.FileUtils;
 import com.jukusoft.mmo.engine.shared.utils.HashUtils;
@@ -12,6 +13,7 @@ import com.jukusoft.mmo.gs.region.database.Database;
 import com.jukusoft.mmo.gs.region.database.InvalideDatabaseException;
 import com.jukusoft.mmo.gs.region.ftp.FTPUtil;
 import com.jukusoft.mmo.gs.region.ftp.NFtpFactory;
+import com.jukusoft.mmo.gs.region.handler.FileUpdaterHandler;
 import com.jukusoft.mmo.gs.region.network.NetHandlerManager;
 import com.jukusoft.mmo.gs.region.network.NetMessageHandler;
 import com.jukusoft.mmo.gs.region.user.User;
@@ -107,7 +109,8 @@ public class RegionContainerImpl implements RegionContainer {
         //load static region data from static database (they are fixed and cannot be changed at runtime - only with updates)
         this.loadStaticDataFromDB();
 
-        //TODO: register message handlers
+        //register message handlers
+        this.handlers().register(DownloadRegionFilesRequest.class, new FileUpdaterHandler(LOG_TAG));
 
         //TODO: load scripts and so on
 
@@ -227,6 +230,10 @@ public class RegionContainerImpl implements RegionContainer {
 
     @Override
     public void receive(Buffer buffer, User user, int cid, RemoteConnection conn) {
+        if (!this.initialized || !this.ftpFilesLoaded) {
+            throw new IllegalStateException("region isn't initialized yet.");
+        }
+
         //unserialize message
         SerializableObject object = Serializer.unserialize(buffer);
 
