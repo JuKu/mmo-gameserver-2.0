@@ -2,6 +2,7 @@ package com.jukusoft.mmo.gs.frontend.network;
 
 import com.jukusoft.mmo.engine.shared.config.Cache;
 import com.jukusoft.mmo.engine.shared.config.Config;
+import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.messages.JoinRegionMessage;
 import com.jukusoft.mmo.gs.region.RegionContainer;
 import com.jukusoft.mmo.gs.region.RegionContainerImpl;
@@ -22,6 +23,8 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -119,20 +122,22 @@ public class ClientHandlerTest {
     }
 
     @Test
-    public void testOnMessageRedirect () {
+    public void testOnMessageRedirect () throws IOException {
+        Config.load(new File("../config/junit-logger.cfg"));
+        Log.init();
+
         ClientHandler initializer = new ClientHandler(Mockito.mock(RegionManager.class), 1, Mockito.mock(Handler.class));
         initializer.authentificated = true;
+        initializer.user = new User(1, "test", new ArrayList<>());
 
         AtomicBoolean b = new AtomicBoolean(false);
 
         initializer.regionContainer = Mockito.mock(RegionContainer.class);
         Mockito.when(initializer.regionContainer.isInitialized()).thenReturn(true);
-        Mockito.doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                b.set(true);
-                return null;
-            }
+        Mockito.doAnswer(invocation -> {
+            System.err.println("handler called.");
+            b.set(true);
+            return null;
         }).when(initializer.regionContainer).receive(any(Buffer.class), any(User.class), anyInt(), any(RemoteConnection.class));
 
         //create example message
@@ -143,6 +148,8 @@ public class ClientHandlerTest {
         assertEquals(false, b.get());
 
         initializer.onMessage(buffer, Mockito.mock(RemoteConnection.class));
+
+        Log.shutdown();
 
         //check, if receive() was called, this means message was redirected
         assertEquals(true, b.get());

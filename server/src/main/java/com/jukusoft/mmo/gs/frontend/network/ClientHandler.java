@@ -146,6 +146,7 @@ public class ClientHandler implements CustomClientInitializer {
                     this.regionContainer.receive(buffer, user, state.getCID(), conn);
                 } catch (Exception e) {
                     Log.w(LOG_TAG, "Exception in region container while receiving message: ", e);
+                    throw new RuntimeException("Exception in region container while receiving message: ", e);
                 }
             }
         } catch (Exception e) {
