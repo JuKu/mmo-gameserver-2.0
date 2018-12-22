@@ -17,12 +17,18 @@ import com.jukusoft.mmo.gs.region.ftp.NFtpFactory;
 import com.jukusoft.mmo.gs.region.handler.FileUpdaterHandler;
 import com.jukusoft.mmo.gs.region.network.NetHandlerManager;
 import com.jukusoft.mmo.gs.region.network.NetMessageHandler;
+import com.jukusoft.mmo.gs.region.subsystem.SubSystemManager;
+import com.jukusoft.mmo.gs.region.subsystem.impl.SubSystemManagerImpl;
+import com.jukusoft.mmo.gs.region.subsystem.impl.WeatherSubSystem;
 import com.jukusoft.mmo.gs.region.user.User;
 import com.jukusoft.mmo.gs.region.utils.PlayerTuple;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import com.jukusoft.vertx.serializer.SerializableObject;
 import com.jukusoft.vertx.serializer.Serializer;
 import com.jukusoft.vertx.serializer.utils.ByteUtils;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 
@@ -32,6 +38,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -54,6 +61,7 @@ public class RegionContainerImpl implements RegionContainer {
     protected boolean initialized = false;
     protected boolean ftpFilesLoaded = false;
     protected Lock ftpInitLock = new ReentrantLock(true);
+    protected CountDownLatch ftpLatch = new CountDownLatch(1);
 
     protected Map<String,String> fileHashes = new HashMap<>();
 
@@ -64,6 +72,8 @@ public class RegionContainerImpl implements RegionContainer {
 
     //message handler manager
     private final NetHandlerManager handlerManager = new NetHandlerManager();
+
+    protected final SubSystemManager subSystemManager;
 
     //sql queries
     protected static final String SQL_GET_REGION = "SELECT * FROM `{prefix}regions` WHERE `regionID` = ? AND `instanceID` = ?; ";
@@ -91,6 +101,8 @@ public class RegionContainerImpl implements RegionContainer {
         this.cachePath = Cache.getInstance().getCachePath("regions/region_" + regionID + "_" + instanceID);
 
         LOG_TAG = "REG_" + regionID + "_" + instanceID + "_" + shardID;
+
+        this.subSystemManager = new SubSystemManagerImpl(this.vertx, LOG_TAG, this.regionID, this.instanceID, this.shardID);
     }
 
     /**
@@ -105,6 +117,8 @@ public class RegionContainerImpl implements RegionContainer {
         this.LOG_TAG = "RegionCont";
 
         this.cachePath = cachePath;
+
+        this.subSystemManager = null;
     }
 
     @Override
@@ -132,6 +146,8 @@ public class RegionContainerImpl implements RegionContainer {
                     try (ResultSet resultSet = statement.executeQuery()) {
                         if (!resultSet.next()) {
                             //TODO: character position isn't inserted yet --> set character start position (from tutorial)
+
+                            return;
                         }
 
                         //TODO: set player position and send them to client
@@ -149,6 +165,18 @@ public class RegionContainerImpl implements RegionContainer {
         Log.i(LOG_TAG, "initialized region '" + this.regionTitle + "' successfully!");
 
         this.initialized = true;
+
+        vertx.executeBlocking(event -> {
+            try {
+                ftpLatch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            this.initSubSystems();
+        }, (Handler<AsyncResult<Void>>) event -> {
+            //don't do anything here
+        });
     }
 
     @Override
@@ -158,6 +186,7 @@ public class RegionContainerImpl implements RegionContainer {
 
     private void downloadFilesFromFtp () {
         ftpFilesLoaded = false;
+        this.ftpLatch = new CountDownLatch(1);
 
         Log.d(LOG_TAG, "download region files from ftp server...");
         NFtpFactory.createAsync(ftpClient -> {
@@ -192,6 +221,7 @@ public class RegionContainerImpl implements RegionContainer {
 
             ftpInitLock.lock();
             ftpFilesLoaded = true;
+            ftpLatch.countDown();
             ftpInitLock.unlock();
 
             //handle all waiting player init entries in queue
@@ -347,6 +377,13 @@ public class RegionContainerImpl implements RegionContainer {
         }
 
         Log.i(LOG_TAG, "loaded static data successfully!");
+    }
+
+    protected void initSubSystems () {
+        Log.i(LOG_TAG, "initialize subsystems...");
+
+        //add subsystems
+        this.subSystemManager.addSubSystem("weather", new WeatherSubSystem());
     }
 
 }
