@@ -67,6 +67,7 @@ public class RegionContainerImpl implements RegionContainer {
 
     //sql queries
     protected static final String SQL_GET_REGION = "SELECT * FROM `{prefix}regions` WHERE `regionID` = ? AND `instanceID` = ?; ";
+    protected static final String SQL_GET_CHARACTER_POSITION = "SELECT * FROM `{prefix}character_positions` WHERE `cid` = ?; ";
 
     public RegionContainerImpl (Vertx vertx, long regionID, int instanceID, int shardID) {
         if (regionID <= 0) {
@@ -122,7 +123,23 @@ public class RegionContainerImpl implements RegionContainer {
         this.handlers().register(StartSyncGameStateRequest.class, (msg, user, cid, conn) -> {
             Log.d(LOG_TAG, "start sync game state.");
 
-            //TODO: load current player position
+            //load current player position
+            try (DBClient dbClient = Database.getClient()) {
+                try (PreparedStatement statement = dbClient.prepareStatement(SQL_GET_CHARACTER_POSITION)) {
+                    //set sql parameter
+                    statement.setInt(1, cid);
+
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        if (!resultSet.next()) {
+                            //TODO: character position isn't inserted yet --> set character start position (from tutorial)
+                        }
+
+                        //TODO: set player position and send them to client
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             //TODO: add code here
         });

@@ -69,6 +69,8 @@ public class Database {
         config.addDataSourceProperty("cacheServerConfiguration", "true");
         config.addDataSourceProperty("maintainTimeStats", "false");
 
+        config.setReadOnly(mySQLConfig.isReadonly());
+
         config.addDataSourceProperty("logSlowQueries", mySQLConfig.getLogSlowQueries());
 
         if (name.equals("main")) {

@@ -23,6 +23,8 @@ public class MySQLConfig {
     //for database upgrader
     protected String migrationPath = "classpath:db/migration";
 
+    protected boolean readonly = false;
+
     //logging settings
     protected String logSlowQueries = "true";
     protected String dumpQueriesOnException = "true";
@@ -117,6 +119,10 @@ public class MySQLConfig {
 
     public String getDumpQueriesOnException() {
         return dumpQueriesOnException;
+    }
+
+    public boolean isReadonly() {
+        return readonly;
     }
 
 }
