@@ -8,9 +8,7 @@ import com.jukusoft.mmo.engine.shared.config.Cache;
 import com.jukusoft.mmo.engine.shared.config.Config;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.logger.LogWriter;
-import com.jukusoft.mmo.engine.shared.messages.DownloadRegionFilesRequest;
-import com.jukusoft.mmo.engine.shared.messages.JoinRegionMessage;
-import com.jukusoft.mmo.engine.shared.messages.LoadMapResponse;
+import com.jukusoft.mmo.engine.shared.messages.*;
 import com.jukusoft.mmo.engine.shared.utils.FileUtils;
 import com.jukusoft.mmo.engine.shared.utils.Utils;
 import com.jukusoft.mmo.engine.shared.version.Version;
@@ -184,6 +182,8 @@ public class ServerMain {
         TypeLookup.register(JoinRegionMessage.class);
         TypeLookup.register(LoadMapResponse.class);
         TypeLookup.register(DownloadRegionFilesRequest.class);
+        TypeLookup.register(StartSyncGameStateRequest.class);
+        TypeLookup.register(StartSyncGameStateResponse.class);
 
         RegionManager regionManager = new RegionManagerImpl(vertx);
 
