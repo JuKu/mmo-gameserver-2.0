@@ -27,7 +27,6 @@ import com.jukusoft.vertx.serializer.SerializableObject;
 import com.jukusoft.vertx.serializer.Serializer;
 import com.jukusoft.vertx.serializer.utils.ByteUtils;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -108,8 +107,8 @@ public class RegionContainerImpl implements RegionContainer {
     /**
     * constructor for junit tests
     */
-    protected RegionContainerImpl (String cachePath) {
-        this.vertx = null;
+    protected RegionContainerImpl (Vertx vertx, String cachePath) {
+        this.vertx = vertx;
         this.regionID = 1;
         this.instanceID = 1;
         this.shardID = 1;

@@ -126,7 +126,7 @@ public class RegionContainerImplTest {
 
     @Test
     public void testInit () throws InterruptedException {
-        RegionContainer container = new RegionContainerImpl(null, 1, 1, 1);
+        RegionContainer container = new RegionContainerImpl(Mockito.mock(Vertx.class), 1, 1, 1);
         assertEquals(false, ((RegionContainerImpl) container).initialized);
         assertEquals(false, ((RegionContainerImpl) container).ftpFilesLoaded);
 
@@ -144,7 +144,7 @@ public class RegionContainerImplTest {
 
     @Test
     public void testIndexClientCache () throws Exception {
-        RegionContainerImpl container = new RegionContainerImpl("../junit-tests/ftp-files/static/regions/region_1_1/");
+        RegionContainerImpl container = new RegionContainerImpl(Mockito.mock(Vertx.class), "../junit-tests/ftp-files/static/regions/region_1_1/");
         container.indexClientCache();
 
         assertEquals(3, container.fileHashes.size());
