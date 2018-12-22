@@ -185,7 +185,7 @@ public class ServerMain {
         TypeLookup.register(LoadMapResponse.class);
         TypeLookup.register(DownloadRegionFilesRequest.class);
 
-        RegionManager regionManager = new RegionManagerImpl();
+        RegionManager regionManager = new RegionManagerImpl(vertx);
 
         //set custom client initializer
         server.setCustomClientInitializer(new ClientInitializer(regionManager));

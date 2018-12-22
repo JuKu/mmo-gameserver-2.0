@@ -6,6 +6,7 @@ import com.carrotsearch.hppc.ObjectArrayList;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.gs.region.utils.RegionCoordUtils;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 
 public class RegionManagerImpl implements RegionManager {
 
@@ -16,6 +17,12 @@ public class RegionManagerImpl implements RegionManager {
     protected ObjectArrayList<RegionContainer> regions = new ObjectArrayList<>(EXPECTED_REGIONS);
     protected IntObjectMap<RegionContainer> regionMap = new IntObjectHashMap<>(EXPECTED_REGIONS);
 
+    protected final Vertx vertx;
+
+    public RegionManagerImpl (Vertx vertx) {
+        this.vertx = vertx;
+    }
+
     @Override
     public RegionContainer find(long regionID, int instanceID, int shardID) {
         return this.regionMap.get(RegionCoordUtils.hash(regionID, instanceID, shardID));
@@ -25,7 +32,7 @@ public class RegionManagerImpl implements RegionManager {
     public void start(long regionID, int instanceID, int shardID, Handler<RegionContainer> handler) {
         Log.i(LOG_TAG, "start new region " + regionID + ", instanceID: " + instanceID + ", shardID: " + shardID + " on this gameserver instance.");
 
-        RegionContainer container = new RegionContainerImpl(regionID, instanceID, shardID);
+        RegionContainer container = new RegionContainerImpl(this.vertx, regionID, instanceID, shardID);
 
         try {
             container.init();

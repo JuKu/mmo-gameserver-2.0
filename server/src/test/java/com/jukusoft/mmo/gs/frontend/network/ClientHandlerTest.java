@@ -13,6 +13,7 @@ import com.jukusoft.vertx.connection.stream.BufferStream;
 import com.jukusoft.vertx.serializer.Serializer;
 import com.jukusoft.vertx.serializer.TypeLookup;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.streams.ReadStream;
 import io.vertx.core.streams.WriteStream;
@@ -214,7 +215,7 @@ public class ClientHandlerTest {
     @Test
     public void testHandleJoinMessageWithCorrectCredentials () {
         RegionManager regionManager = Mockito.mock(RegionManager.class);
-        Mockito.when(regionManager.find(anyLong(), anyInt(), anyInt())).thenReturn(new RegionContainerImpl(1, 2, 3));
+        Mockito.when(regionManager.find(anyLong(), anyInt(), anyInt())).thenReturn(new RegionContainerImpl(Mockito.mock(Vertx.class), 1, 2, 3));
 
         ClientHandler initializer = new ClientHandler(regionManager, 1, Mockito.mock(Handler.class));
 

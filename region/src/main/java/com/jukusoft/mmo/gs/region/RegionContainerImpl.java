@@ -22,6 +22,7 @@ import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
 import com.jukusoft.vertx.serializer.SerializableObject;
 import com.jukusoft.vertx.serializer.Serializer;
 import com.jukusoft.vertx.serializer.utils.ByteUtils;
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 
 import java.io.File;
@@ -58,13 +59,15 @@ public class RegionContainerImpl implements RegionContainer {
     //queue with players which have connected while region was in initialization process
     protected Queue<PlayerTuple> waitingPlayerInitQueue = new ConcurrentLinkedQueue<>();
 
+    protected final Vertx vertx;
+
     //message handler manager
     private final NetHandlerManager handlerManager = new NetHandlerManager();
 
     //sql queries
     protected static final String SQL_GET_REGION = "SELECT * FROM `{prefix}regions` WHERE `regionID` = ? AND `instanceID` = ?; ";
 
-    public RegionContainerImpl (long regionID, int instanceID, int shardID) {
+    public RegionContainerImpl (Vertx vertx, long regionID, int instanceID, int shardID) {
         if (regionID <= 0) {
             throw new IllegalArgumentException("regionID has to be >= 1.");
         }
@@ -76,6 +79,8 @@ public class RegionContainerImpl implements RegionContainer {
         if (shardID <= 0) {
             throw new IllegalArgumentException("shardID has to be >= 1.");
         }
+
+        this.vertx = vertx;
 
         this.regionID = regionID;
         this.instanceID = instanceID;
@@ -90,6 +95,7 @@ public class RegionContainerImpl implements RegionContainer {
     * constructor for junit tests
     */
     protected RegionContainerImpl (String cachePath) {
+        this.vertx = null;
         this.regionID = 1;
         this.instanceID = 1;
         this.shardID = 1;
@@ -110,7 +116,7 @@ public class RegionContainerImpl implements RegionContainer {
         this.loadStaticDataFromDB();
 
         //register message handlers
-        this.handlers().register(DownloadRegionFilesRequest.class, new FileUpdaterHandler(LOG_TAG));
+        this.handlers().register(DownloadRegionFilesRequest.class, new FileUpdaterHandler(LOG_TAG, this.regionID, this.instanceID, this.vertx, this.cachePath));
 
         //TODO: load scripts and so on
 

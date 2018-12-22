@@ -106,27 +106,27 @@ public class RegionContainerImplTest {
 
     @Test
     public void testConstructor () {
-        new RegionContainerImpl(1, 1, 1);
+        new RegionContainerImpl(null, 1, 1, 1);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void testConstructorNullRegion () {
-        new RegionContainerImpl(0, 1, 1);
+        new RegionContainerImpl(null, 0, 1, 1);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void testConstructorNullInstance () {
-        new RegionContainerImpl(1, 0, 1);
+        new RegionContainerImpl(null, 1, 0, 1);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void testConstructorNullShardID () {
-        new RegionContainerImpl(1, 1, 0);
+        new RegionContainerImpl(null, 1, 1, 0);
     }
 
     @Test
     public void testInit () throws InterruptedException {
-        RegionContainer container = new RegionContainerImpl(1, 1, 1);
+        RegionContainer container = new RegionContainerImpl(null, 1, 1, 1);
         assertEquals(false, ((RegionContainerImpl) container).initialized);
         assertEquals(false, ((RegionContainerImpl) container).ftpFilesLoaded);
 
