@@ -185,6 +185,17 @@ public class RegionContainerImpl implements RegionContainer {
         Objects.requireNonNull(user, "user cannot be null.");
         Objects.requireNonNull(conn, "conn cannot be null.");
 
+        if (this.locked) {
+            //region is locked (maybe because a region update is occuring
+            Log.w(LOG_TAG, "Cannot init player '" + user.getUsername() + "' (userID: " + user.getUserID() + ") with characterID " + cid + " because region is locked.");
+
+            //TODO: add player to queue
+
+            //TODO: send error message to client
+
+            return;
+        }
+
         Log.i(LOG_TAG, "init player '" + user.getUsername() + "' (userID: " + user.getUserID() + ") with characterID " + cid);
         PlayerTuple player = new PlayerTuple(user, cid, conn);
 
