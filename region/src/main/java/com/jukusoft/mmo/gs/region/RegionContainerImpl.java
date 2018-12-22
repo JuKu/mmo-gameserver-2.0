@@ -6,6 +6,7 @@ import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.engine.shared.memory.Pools;
 import com.jukusoft.mmo.engine.shared.messages.DownloadRegionFilesRequest;
 import com.jukusoft.mmo.engine.shared.messages.LoadMapResponse;
+import com.jukusoft.mmo.engine.shared.messages.StartSyncGameStateRequest;
 import com.jukusoft.mmo.engine.shared.utils.FileUtils;
 import com.jukusoft.mmo.engine.shared.utils.HashUtils;
 import com.jukusoft.mmo.gs.region.database.DBClient;
@@ -117,6 +118,14 @@ public class RegionContainerImpl implements RegionContainer {
 
         //register message handlers
         this.handlers().register(DownloadRegionFilesRequest.class, new FileUpdaterHandler(LOG_TAG, this.regionID, this.instanceID, this.vertx, this.cachePath));
+
+        this.handlers().register(StartSyncGameStateRequest.class, (msg, user, cid, conn) -> {
+            Log.d(LOG_TAG, "start sync game state.");
+
+            //TODO: load current player position
+
+            //TODO: add code here
+        });
 
         //TODO: load scripts and so on
 

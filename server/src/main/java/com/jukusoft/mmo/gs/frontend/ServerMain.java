@@ -183,7 +183,6 @@ public class ServerMain {
         TypeLookup.register(LoadMapResponse.class);
         TypeLookup.register(DownloadRegionFilesRequest.class);
         TypeLookup.register(StartSyncGameStateRequest.class);
-        TypeLookup.register(StartSyncGameStateResponse.class);
 
         RegionManager regionManager = new RegionManagerImpl(vertx);
 
