@@ -20,7 +20,7 @@ public interface SubSystem {
      *
      * @param user user with permissions
      * @param cid character id
-     * @param cmd command (e.q. "/setWeather sunny" --> command = "setWeather")
+     * @param cmd command (e.q. "/setWeather sunny" --&gt; command = "setWeather")
      * @param args array with arguments
      *
      * @return true, if command was processed and belongs to this subsystem (on false iterate over other subsystems)

@@ -5,6 +5,7 @@ public interface SubSystemManager {
     /**
     * add subsystem
      *
+     * @param name local unique name of subsystem
      * @param system instance of subsystem
     */
     public void addSubSystem (String name, SubSystem system);
