@@ -52,7 +52,7 @@ public class FileUpdaterHandler implements NetMessageHandler<DownloadRegionFiles
                     return;
                 }
 
-                Log.v(LOG_TAG, "send file to client: " + filePath1);
+                Log.v(LOG_TAG, "send file to client: " + filePath1 + " (cache path: " + path + ")");
 
                 DownloadRegionFileResponse response = Pools.get(DownloadRegionFileResponse.class);
                 response.regionID = this.regionID;
