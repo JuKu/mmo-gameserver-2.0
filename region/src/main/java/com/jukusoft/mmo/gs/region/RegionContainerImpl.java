@@ -154,6 +154,7 @@ public class RegionContainerImpl implements RegionContainer {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.w(LOG_TAG, "Coulnd't load current player position. cid: " + cid, e);
             }
 
             //TODO: add code here
