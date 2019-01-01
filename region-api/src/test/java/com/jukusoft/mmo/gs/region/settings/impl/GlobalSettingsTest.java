@@ -45,6 +45,7 @@ public class GlobalSettingsTest {
     protected static void mockDB () throws SQLException {
         Connection connection = Mockito.mock(Connection.class);
         Database.setJunitConn(connection);
+        Database.getConnection();
 
         client = Mockito.mock(DBClient.class);
         ResultSet rs = Mockito.mock(ResultSet.class);
