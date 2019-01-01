@@ -25,13 +25,26 @@ import static org.mockito.Mockito.when;
 
 public class GlobalSettingsTest {
 
+    protected static ResultSet rs = null;
+
     @BeforeClass
     public static void beforeClass () throws SQLException {
+        mockDB();
+    }
+
+    @AfterClass
+    public static void afterClass () {
+        Database.setJunitConn(null);
+        Database.setJunitClient(null);
+    }
+
+    protected static void mockDB () throws SQLException {
         Connection connection = Mockito.mock(Connection.class);
         Database.setJunitConn(connection);
 
         DBClient client = Mockito.mock(DBClient.class);
         ResultSet rs = Mockito.mock(ResultSet.class);
+        GlobalSettingsTest.rs = rs;
         when(rs.getString(anyString())).thenReturn("test");
 
         AtomicInteger i = new AtomicInteger(2);
@@ -42,12 +55,6 @@ public class GlobalSettingsTest {
 
         when(client.query(anyString())).thenReturn(rs);
         Database.setJunitClient(client);
-    }
-
-    @AfterClass
-    public static void afterClass () {
-        Database.setJunitConn(null);
-        Database.setJunitClient(null);
     }
 
     @Test
@@ -93,6 +100,20 @@ public class GlobalSettingsTest {
         when(hazelcastInstance.getMap(anyString())).thenReturn(map);
 
         new GlobalSettings(hazelcastInstance);
+    }
+
+    @Test
+    public void testConstructor2 () throws SQLException {
+        HazelcastInstance hazelcastInstance = Mockito.mock(HazelcastInstance.class);
+        IMap map = Mockito.mock(IMap.class);
+
+        when(hazelcastInstance.getMap(anyString())).thenReturn(map);
+
+        when(rs.next()).thenThrow(RuntimeException.class);
+
+        new GlobalSettings(hazelcastInstance);
+
+        mockDB();
     }
 
 }
