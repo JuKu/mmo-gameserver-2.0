@@ -89,6 +89,7 @@ public class GlobalSettings implements Settings {
                 statement.setString(2, key);
                 statement.setString(3, value);
                 statement.setString(4, value);
+                statement.execute();
             }
         } catch (Exception e) {
             Log.w(LOG_TAG, "Exception while set global setting: ", e);
