@@ -10,12 +10,12 @@ public interface Settings {
 
     public void setBool (String area, String key, boolean value);
 
-    public String get (String area, String key) throws SettingNotExistsException;
+    public String get (String area, String key);
 
-    public int getInt (String area, String key) throws SettingNotExistsException;
+    public int getInt (String area, String key);
 
-    public float getFloat (String area, String key) throws SettingNotExistsException;
+    public float getFloat (String area, String key);
 
-    public boolean getBoolean (String area, String key) throws SettingNotExistsException;
+    public boolean getBoolean (String area, String key);
 
 }

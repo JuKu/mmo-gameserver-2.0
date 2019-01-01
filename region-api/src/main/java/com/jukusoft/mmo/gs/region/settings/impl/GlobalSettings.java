@@ -102,8 +102,8 @@ public class GlobalSettings implements Settings {
         keyValueMap.put(key, value);
     }
 
-    protected void setLocal (String area_key, String value) {
-        String array[] = area_key.split("#SPLIT#");
+    protected void setLocal (String areaKey, String value) {
+        String array[] = areaKey.split("#SPLIT#");
         setLocal(array[0], array[1], value);
     }
 
@@ -128,7 +128,7 @@ public class GlobalSettings implements Settings {
     }
 
     @Override
-    public String get(String area, String key) throws SettingNotExistsException {
+    public String get(String area, String key)  {
         ObjectObjectMap<String,String> keyValueMap = this.settings.get(area);
 
         if (keyValueMap == null) {
@@ -145,17 +145,17 @@ public class GlobalSettings implements Settings {
     }
 
     @Override
-    public int getInt(String area, String key) throws SettingNotExistsException {
+    public int getInt(String area, String key)  {
         return Integer.parseInt(get(area, key));
     }
 
     @Override
-    public float getFloat(String area, String key) throws SettingNotExistsException {
+    public float getFloat(String area, String key)  {
         return Float.parseFloat(get(area, key));
     }
 
     @Override
-    public boolean getBoolean(String area, String key) throws SettingNotExistsException {
+    public boolean getBoolean(String area, String key)  {
         return get(area, key).equals("true") ? true : false;
     }
 
