@@ -37,6 +37,13 @@ public class GlobalSettings implements Settings {
         load(hazelcastInstance);
     }
 
+    /**
+    * constructor for junit tests
+    */
+    protected GlobalSettings () {
+        //
+    }
+
     protected void load (HazelcastInstance hazelcastInstance) {
         this.clusteredSettingsMap = hazelcastInstance.getMap("global-settings-cache");
 
