@@ -130,7 +130,19 @@ public class GlobalSettings implements Settings {
 
     @Override
     public String get(String area, String key) throws SettingNotExistsException {
-        return null;
+        ObjectObjectMap<String,String> keyValueMap = this.settings.get(area);
+
+        if (keyValueMap == null) {
+            throw new SettingNotExistsException("settings area '" + area + "' doesn't exists in cache (key: " + key + ").");
+        }
+
+        String value = keyValueMap.get(key);
+
+        if (value == null) {
+            throw new SettingNotExistsException("settings key '" + key + "' in area '" + area + "' doesn't exists!");
+        }
+
+        return value;
     }
 
     @Override

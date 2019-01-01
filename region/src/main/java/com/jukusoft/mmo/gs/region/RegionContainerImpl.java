@@ -7,6 +7,7 @@ import com.jukusoft.mmo.engine.shared.memory.Pools;
 import com.jukusoft.mmo.engine.shared.messages.DownloadRegionFilesRequest;
 import com.jukusoft.mmo.engine.shared.messages.LoadMapResponse;
 import com.jukusoft.mmo.engine.shared.messages.StartSyncGameStateRequest;
+import com.jukusoft.mmo.engine.shared.messages.StartSyncGameStateResponse;
 import com.jukusoft.mmo.engine.shared.utils.FileUtils;
 import com.jukusoft.mmo.engine.shared.utils.HashUtils;
 import com.jukusoft.mmo.gs.region.database.DBClient;
@@ -17,6 +18,8 @@ import com.jukusoft.mmo.gs.region.ftp.NFtpFactory;
 import com.jukusoft.mmo.gs.region.handler.FileUpdaterHandler;
 import com.jukusoft.mmo.gs.region.network.NetHandlerManager;
 import com.jukusoft.mmo.gs.region.network.NetMessageHandler;
+import com.jukusoft.mmo.gs.region.settings.Settings;
+import com.jukusoft.mmo.gs.region.settings.impl.GlobalSettings;
 import com.jukusoft.mmo.gs.region.subsystem.SubSystemManager;
 import com.jukusoft.mmo.gs.region.subsystem.impl.SubSystemManagerImpl;
 import com.jukusoft.mmo.gs.region.subsystem.impl.WeatherSubSystem;
@@ -30,6 +33,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -143,13 +147,37 @@ public class RegionContainerImpl implements RegionContainer {
                     statement.setInt(1, cid);
 
                     try (ResultSet resultSet = statement.executeQuery()) {
-                        if (!resultSet.next()) {
-                            //TODO: character position isn't inserted yet --> set character start position (from tutorial)
+                        float posX = 0;
+                        float posY = 0;
+                        float posZ = 0;
 
-                            return;
+                        if (!resultSet.next()) {
+                            //character position isn't inserted yet --> set character start position (from tutorial)
+                            Settings settings = GlobalSettings.getInstance();
+                            posX = settings.getFloat("tutorial", "start_pos_x");
+                            posY = settings.getFloat("tutorial", "start_pos_y");
+                            posZ = settings.getFloat("tutorial", "start_pos_z");
+                        } else {
+                            //get position from db
+                            posX = resultSet.getFloat("pos_x");
+                            posY = resultSet.getFloat("pos_y");
+                            posZ = resultSet.getFloat("pos_z");
                         }
 
                         //TODO: set player position and send them to client
+
+                        StartSyncGameStateResponse response = Pools.get(StartSyncGameStateResponse.class);
+                        response.posX = posX;
+                        response.posY = posY;
+                        response.posZ = posZ;
+
+                        response.currentServerTime = System.currentTimeMillis();
+                        response.staticObjects = new JsonObject();
+                        response.currentGameWorldData = new JsonObject();
+
+                        //TODO: fill gameworld data
+
+                        conn.send(response);
                     }
                 }
             } catch (Exception e) {
