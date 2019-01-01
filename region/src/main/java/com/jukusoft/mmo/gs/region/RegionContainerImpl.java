@@ -175,7 +175,11 @@ public class RegionContainerImpl implements RegionContainer {
                         response.staticObjects = new JsonObject();
                         response.currentGameWorldData = new JsonObject();
 
-                        //TODO: fill gameworld data
+                        //fill static objects data
+                        this.subSystemManager.fillStaticObjects(response.staticObjects, user, cid, posX, posY, posZ);
+
+                        //fill game world data
+                        this.subSystemManager.fillGameWorldData(response.currentGameWorldData, user, cid, posX, posY, posZ);
 
                         conn.send(response);
                     }
