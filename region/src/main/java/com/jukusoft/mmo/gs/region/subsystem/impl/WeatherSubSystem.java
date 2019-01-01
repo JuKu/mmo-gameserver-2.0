@@ -8,7 +8,7 @@ public class WeatherSubSystem implements SubSystem {
 
     @Override
     public void init(Vertx vertx, long regionID, int instanceID, int shardID) {
-
+        //
     }
 
     @Override

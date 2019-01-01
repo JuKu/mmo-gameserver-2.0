@@ -2,16 +2,16 @@ package com.jukusoft.mmo.gs.region.subsystem.impl;
 
 import com.carrotsearch.hppc.ObjectObjectHashMap;
 import com.carrotsearch.hppc.ObjectObjectMap;
-import com.carrotsearch.hppc.predicates.ObjectObjectPredicate;
 import com.jukusoft.mmo.gs.region.subsystem.SubSystem;
 import com.jukusoft.mmo.gs.region.subsystem.SubSystemManager;
-import com.jukusoft.mmo.gs.region.user.User;
 import io.vertx.core.Vertx;
 import org.mini2Dx.gdx.utils.Array;
 
 public class SubSystemManagerImpl implements SubSystemManager {
 
     protected static final int INITIAL_CAPACITY = 20;
+
+    protected final String LOG_TAG;
 
     //array with all subsystems
     protected Array<SubSystem> list = new Array(false, INITIAL_CAPACITY);
@@ -29,6 +29,8 @@ public class SubSystemManagerImpl implements SubSystemManager {
         this.regionID = regionID;
         this.instanceID = instanceID;
         this.shardID = shardID;
+
+        this.LOG_TAG = LOG_TAG;
     }
 
     @Override
