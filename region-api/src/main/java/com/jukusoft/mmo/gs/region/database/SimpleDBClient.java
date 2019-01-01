@@ -2,6 +2,7 @@ package com.jukusoft.mmo.gs.region.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -22,6 +23,13 @@ public class SimpleDBClient implements DBClient {
     public PreparedStatement prepareStatement (String sql) throws SQLException {
         String query = sql.replace("{prefix}", this.prefix);
         return this.connection.prepareStatement(query);
+    }
+
+    @Override
+    public ResultSet query(String sql) throws SQLException {
+        try (PreparedStatement statement = prepareStatement(sql)) {
+            return statement.executeQuery();
+        }
     }
 
     @Override

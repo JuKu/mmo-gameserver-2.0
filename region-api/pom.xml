@@ -54,6 +54,13 @@
 			<version>${apache.commons.net.version}</version>
 		</dependency>
 
+		<!-- Hazelcast -->
+		<dependency>
+			<groupId>com.hazelcast</groupId>
+			<artifactId>hazelcast</artifactId>
+			<version>${hazelcast.version}</version>
+		</dependency>
+
 		<!-- jdbc client for vertx -->
 		<dependency>
 			<groupId>io.vertx</groupId>

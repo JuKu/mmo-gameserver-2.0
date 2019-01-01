@@ -20,6 +20,7 @@ import com.jukusoft.mmo.gs.region.RegionManager;
 import com.jukusoft.mmo.gs.region.RegionManagerImpl;
 import com.jukusoft.mmo.gs.region.ftp.FTPFactory;
 import com.jukusoft.mmo.gs.region.ftp.NFtpFactory;
+import com.jukusoft.mmo.gs.region.settings.impl.GlobalSettings;
 import com.jukusoft.vertx.connection.clientserver.TCPServer;
 import com.jukusoft.vertx.serializer.TypeLookup;
 import io.github.bckfnn.ftp.FtpClient;
@@ -136,6 +137,9 @@ public class ServerMain {
         //initialize database connection
         DatabaseFactory.build(vertx).close();
 
+        Log.i("Settings", "load global settings...");
+        GlobalSettings.init(hazelcastInstance);
+
         //check ftp connection
         FTPFactory.init(vertx);
         NFtpFactory.init(vertx);
@@ -154,18 +158,6 @@ public class ServerMain {
                 //don't do anything here
             });
         }
-
-        /*FTPClient ftpClient = NFtpFactory.createSync();
-
-        if (ftpClient == null) {
-            throw new IllegalStateException("Coulnd't connect and login on ftp server...");
-        } else {
-            Log.i(FTP_TAG, "connection to ftp server was successfully!");
-
-            //close ftp connection now, because we don't need it yet
-            ftpClient.logout();
-            ftpClient.disconnect();
-        }*/
 
         //get host (interface) and port from config
         String host = Config.get(SECTION_NAME, "host");
