@@ -8,15 +8,14 @@ import com.jukusoft.mmo.gs.region.database.DBClient;
 import com.jukusoft.mmo.gs.region.database.Database;
 import com.jukusoft.mmo.gs.region.settings.SettingNotExistsException;
 import com.jukusoft.mmo.gs.region.settings.Settings;
-import com.mysql.cj.jdbc.result.ResultSetImpl;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -30,6 +29,7 @@ import static org.mockito.Mockito.when;
 public class GlobalSettingsTest {
 
     protected static ResultSet rs = null;
+    protected static DBClient client = null;
 
     @BeforeClass
     public static void beforeClass () throws SQLException {
@@ -46,7 +46,7 @@ public class GlobalSettingsTest {
         Connection connection = Mockito.mock(Connection.class);
         Database.setJunitConn(connection);
 
-        DBClient client = Mockito.mock(DBClient.class);
+        client = Mockito.mock(DBClient.class);
         ResultSet rs = Mockito.mock(ResultSet.class);
         GlobalSettingsTest.rs = rs;
         when(rs.getString(anyString())).thenReturn("test");
@@ -160,7 +160,9 @@ public class GlobalSettingsTest {
     }
 
     @Test
-    public void testGetterAndSetter () {
+    public void testGetterAndSetter () throws SQLException {
+        when(client.prepareStatement(anyString())).thenReturn(Mockito.mock(PreparedStatement.class));
+
         Settings settings = new GlobalSettings();
         ((GlobalSettings) settings).clusteredSettingsMap = Mockito.mock(IMap.class);
 
@@ -179,6 +181,9 @@ public class GlobalSettingsTest {
 
         settings.setFloat("area1", "float-key", 1.2f);
         assertEquals(1.2f, settings.getFloat("area1", "float-key"), 0.0001f);
+
+        //reset db instance
+        mockDB();
     }
 
     @Test (expected = SettingNotExistsException.class)
