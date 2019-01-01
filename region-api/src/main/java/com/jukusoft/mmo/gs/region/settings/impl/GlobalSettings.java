@@ -168,7 +168,7 @@ public class GlobalSettings implements Settings {
 
     @Override
     public boolean getBoolean(String area, String key)  {
-        return get(area, key).equals("true") ? true : false;
+        return get(area, key).equals("true");
     }
 
     public static Settings getInstance () {

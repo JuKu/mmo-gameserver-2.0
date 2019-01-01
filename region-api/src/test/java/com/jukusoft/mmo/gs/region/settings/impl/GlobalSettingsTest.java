@@ -119,6 +119,14 @@ public class GlobalSettingsTest {
 
     @Test
     public void testInit () {
+        GlobalSettings.instance = null;
+        GlobalSettings.init(getHzInstance());
+    }
+
+    @Test (expected = IllegalStateException.class)
+    public void testInitTwice () {
+        GlobalSettings.instance = null;
+        GlobalSettings.init(getHzInstance());
         GlobalSettings.init(getHzInstance());
     }
 
@@ -163,6 +171,14 @@ public class GlobalSettingsTest {
         assertEquals("1", settings.get("test", "test3"));
         assertEquals(1, settings.getInt("test", "test3"));
         assertEquals(1, settings.getFloat("test", "test3"), 0.0001f);
+
+        settings.setBool("area", "bool-key", true);
+        assertEquals(true, settings.getBoolean("area", "bool-key"));
+        settings.setBool("area", "bool-key", false);
+        assertEquals(false, settings.getBoolean("area", "bool-key"));
+
+        settings.setFloat("area1", "float-key", 1.2f);
+        assertEquals(1.2f, settings.getFloat("area1", "float-key"), 0.0001f);
     }
 
     @Test (expected = SettingNotExistsException.class)
