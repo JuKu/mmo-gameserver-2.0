@@ -73,6 +73,8 @@ public class GlobalSettings implements Settings {
 
     @Override
     public void set(String area, String key, String value) {
+        Objects.requireNonNull(value);
+
         //update in DB
         try (DBClient client = Database.getClient()) {
             try (PreparedStatement statement = client.prepareStatement(SQL_INSERT_QUERY)) {
@@ -103,6 +105,9 @@ public class GlobalSettings implements Settings {
     }
 
     protected void setLocal (String areaKey, String value) {
+        Objects.requireNonNull(areaKey);
+        Objects.requireNonNull(value);
+
         String array[] = areaKey.split("#SPLIT#");
         setLocal(array[0], array[1], value);
     }
