@@ -28,6 +28,10 @@ public class Database {
 
     protected static ObjectObjectMap<String,HikariDataSource> dataSourceMap = new ObjectObjectHashMap<>();
 
+    //for junit tests
+    protected static Connection junitConn = null;
+    protected static DBClient junitClient = null;
+
     protected Database() {
         //
     }
@@ -85,6 +89,14 @@ public class Database {
         Log.i(LOG_TAG, "connection established.");
     }
 
+    public static void setJunitConn (Connection conn) {
+        junitConn = conn;
+    }
+
+    public static void setJunitClient (DBClient client) {
+        junitClient = client;
+    }
+
     public static HikariDataSource getDataSource () {
         return getDataSource("main");
     }
@@ -104,6 +116,11 @@ public class Database {
     public static Connection getConnection (String name) throws SQLException {
         Objects.requireNonNull(name);
 
+        if (junitConn != null) {
+            //its called from junit test
+            return junitConn;
+        }
+
         if (name.equals("main")) {
             return dataSource.getConnection();
         } else {
@@ -121,6 +138,10 @@ public class Database {
 
     public static DBClient getClient (String name) {
         Objects.requireNonNull(name);
+
+        if (junitClient != null) {
+            return junitClient;
+        }
 
         try {
             Connection connection = getConnection(name);
