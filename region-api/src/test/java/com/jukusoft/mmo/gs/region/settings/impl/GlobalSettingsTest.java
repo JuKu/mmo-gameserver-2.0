@@ -11,12 +11,14 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
@@ -31,6 +33,13 @@ public class GlobalSettingsTest {
         DBClient client = Mockito.mock(DBClient.class);
         ResultSet rs = Mockito.mock(ResultSet.class);
         when(rs.getString(anyString())).thenReturn("test");
+
+        AtomicInteger i = new AtomicInteger(2);
+        when(rs.next()).then((Answer<Boolean>) invocation -> {
+            System.err.println("i = " + i);
+            return i.getAndDecrement() > 0;
+        });
+
         when(client.query(anyString())).thenReturn(rs);
         Database.setJunitClient(client);
     }
