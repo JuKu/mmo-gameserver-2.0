@@ -53,11 +53,7 @@ public class SubSystemManagerImpl implements SubSystemManager {
 
         //remove all name - system entries with the same object
         this.subSystemsMap.removeAll((key, value) -> {
-            if (value.equals(system)) {
-                return true;
-            } else {
-                return false;
-            }
+            return value.equals(system);
         });
     }
 

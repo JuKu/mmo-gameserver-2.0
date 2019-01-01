@@ -37,7 +37,7 @@ public class SimpleDBClientTest {
 
         when(((SimpleDBClient) dbClient).connection.prepareStatement(anyString())).thenReturn(new PreparedStatementAdapter() {
             @Override
-            public ResultSet executeQuery() throws SQLException {
+            public ResultSet executeQuery() {
                 return Mockito.mock(ResultSet.class);
             }
         });
