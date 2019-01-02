@@ -47,6 +47,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class RegionContainerImpl implements RegionContainer {
 
+    protected static final String TUTORIAL_AREA = "tutorial";
+
     protected final String LOG_TAG;
 
     //region coordinates
@@ -154,9 +156,9 @@ public class RegionContainerImpl implements RegionContainer {
                         if (!resultSet.next()) {
                             //character position isn't inserted yet --> set character start position (from tutorial)
                             Settings settings = GlobalSettings.getInstance();
-                            posX = settings.getFloat("tutorial", "start_pos_x");
-                            posY = settings.getFloat("tutorial", "start_pos_y");
-                            posZ = settings.getFloat("tutorial", "start_pos_z");
+                            posX = settings.getFloat(TUTORIAL_AREA, "start_pos_x");
+                            posY = settings.getFloat(TUTORIAL_AREA, "start_pos_y");
+                            posZ = settings.getFloat(TUTORIAL_AREA, "start_pos_z");
                         } else {
                             //get position from db
                             posX = resultSet.getFloat("pos_x");
