@@ -28,6 +28,11 @@ public interface SubSystemManager {
     public void removeSubSystem (String name);
 
     /**
+    * get a specific subsystem
+    */
+    public <T extends SubSystem> T getSubSystem (Class<T> cls);
+
+    /**
     * add all static objects to given json object to send to client
     */
     public void fillStaticObjects (JsonObject json, User user, int cid, float posX, float posY, float posZ);

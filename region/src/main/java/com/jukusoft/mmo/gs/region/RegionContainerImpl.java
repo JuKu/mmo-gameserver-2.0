@@ -21,6 +21,7 @@ import com.jukusoft.mmo.gs.region.network.NetMessageHandler;
 import com.jukusoft.mmo.gs.region.settings.Settings;
 import com.jukusoft.mmo.gs.region.settings.impl.GlobalSettings;
 import com.jukusoft.mmo.gs.region.subsystem.SubSystemManager;
+import com.jukusoft.mmo.gs.region.subsystem.impl.CharacterDataService;
 import com.jukusoft.mmo.gs.region.subsystem.impl.SubSystemManagerImpl;
 import com.jukusoft.mmo.gs.region.subsystem.impl.WeatherSubSystem;
 import com.jukusoft.mmo.gs.region.user.User;
@@ -142,7 +143,7 @@ public class RegionContainerImpl implements RegionContainer {
         this.handlers().register(StartSyncGameStateRequest.class, (msg, user, cid, conn) -> {
             Log.d(LOG_TAG, "start sync game state.");
 
-            //load current player position
+            //load last character position from database (if it not exists --> character has joined the first time to this game)
             try (DBClient dbClient = Database.getClient()) {
                 try (PreparedStatement statement = dbClient.prepareStatement(SQL_GET_CHARACTER_POSITION)) {
                     //set sql parameter
@@ -166,7 +167,11 @@ public class RegionContainerImpl implements RegionContainer {
                             posZ = resultSet.getFloat("pos_z");
                         }
 
-                        //TODO: set player position and send them to client
+                        //load character data
+                        CharacterDataService characterService = this.subSystemManager.getSubSystem(CharacterDataService.class);
+                        characterService.loadCharacter(user, cid);
+
+                        //set player position and send them to client
 
                         StartSyncGameStateResponse response = Pools.get(StartSyncGameStateResponse.class);
                         response.posX = posX;
@@ -182,6 +187,9 @@ public class RegionContainerImpl implements RegionContainer {
 
                         //fill game world data
                         this.subSystemManager.fillGameWorldData(response.currentGameWorldData, user, cid, posX, posY, posZ);
+
+                        Log.v(LOG_TAG, "send static objects data: " + response.staticObjects.encodePrettily());
+                        Log.v(LOG_TAG, "send game world data: " + response.currentGameWorldData.encodePrettily());
 
                         conn.send(response);
                     }
@@ -322,10 +330,6 @@ public class RegionContainerImpl implements RegionContainer {
             response.addRequiredMap(entry.getKey(), entry.getValue());
         }
 
-        //TODO: load character data
-
-        //TODO: load last character position from database (if it not exists --> character has joined the first time to this game)
-
         Log.d(LOG_TAG, "send LoadMapResponse to client.");
 
         //send message back to client
@@ -415,6 +419,7 @@ public class RegionContainerImpl implements RegionContainer {
 
         //add subsystems
         this.subSystemManager.addSubSystem("weather", new WeatherSubSystem());
+        this.subSystemManager.addSubSystem("characterService", new CharacterDataService());
     }
 
 }

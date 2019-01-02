@@ -2,6 +2,7 @@ package com.jukusoft.mmo.gs.region.subsystem.impl;
 
 import com.carrotsearch.hppc.ObjectObjectHashMap;
 import com.carrotsearch.hppc.ObjectObjectMap;
+import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.gs.region.subsystem.GameWorldDataHolder;
 import com.jukusoft.mmo.gs.region.subsystem.StaticObjectsHolder;
 import com.jukusoft.mmo.gs.region.subsystem.SubSystem;
@@ -22,6 +23,7 @@ public class SubSystemManagerImpl implements SubSystemManager {
 
     //map with subsystems
     protected ObjectObjectMap<String,SubSystem> subSystemsMap = new ObjectObjectHashMap<>(INITIAL_CAPACITY);
+    protected ObjectObjectMap<Class<?>,SubSystem> classToSubSystemMap = new ObjectObjectHashMap<>();
 
     protected final Vertx vertx;
     protected final long regionID;
@@ -41,6 +43,9 @@ public class SubSystemManagerImpl implements SubSystemManager {
     public void addSubSystem(String name, SubSystem system) {
         //first, initialize subsystem
         system.init(this.vertx, this.regionID, this.instanceID, this.shardID);
+
+        Log.v(LOG_TAG, "added subsystem: " + system.getClass().getSimpleName());
+        this.classToSubSystemMap.put(system.getClass(), system);
 
         this.subSystemsMap.put(name, system);
         this.list.add(system);
@@ -69,6 +74,17 @@ public class SubSystemManagerImpl implements SubSystemManager {
         this.list.removeValue(system, false);
         this.subSystemsMap.remove(name);
         system.shutdown();
+    }
+
+    @Override
+    public <T extends SubSystem> T getSubSystem(Class<T> cls) {
+        Object subSystem = this.classToSubSystemMap.get(cls);
+
+        if (subSystem == null) {
+            throw new IllegalStateException("subsystem with class '" + cls.getCanonicalName() + "' doesn't exists!");
+        }
+
+        return cls.cast(subSystem);
     }
 
     @Override
