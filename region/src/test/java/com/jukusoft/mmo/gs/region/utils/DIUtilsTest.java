@@ -2,6 +2,7 @@ package com.jukusoft.mmo.gs.region.utils;
 
 import com.jukusoft.mmo.gs.region.subsystem.RequiredSubSystemNotFoundException;
 import com.jukusoft.mmo.gs.region.subsystem.SubSystem;
+import com.jukusoft.mmo.gs.region.subsystem.impl.WeatherSubSystem;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -44,6 +45,21 @@ public class DIUtilsTest {
 
         DIUtils.injectSubSystems(testObj, DummyObject4.class, map);
         assertNotNull(testObj.testSubSystem);
+    }
+
+    @Test
+    public void testInjectClassWithAnnoation () {
+        Map<Class, SubSystem> map = new HashMap<>();
+        map.put(TestSubSystem.class, new TestSubSystem());
+        map.put(WeatherSubSystem.class, new WeatherSubSystem());
+
+        DummyObjectWithAnnotation testObj = new DummyObjectWithAnnotation();
+        assertNull(testObj.testSubSystem);
+        assertNull(testObj.weatherSubSystem);
+
+        DIUtils.injectSubSystems(testObj, DummyObjectWithAnnotation.class, map);
+        assertNotNull(testObj.testSubSystem);
+        assertNotNull(testObj.weatherSubSystem);
     }
 
     @Test

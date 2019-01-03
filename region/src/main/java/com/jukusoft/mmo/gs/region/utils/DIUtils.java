@@ -69,7 +69,7 @@ public class DIUtils {
         for (int i = 0, s = declaredFields.length; s > i; i++) {
             if (SubSystem.class.isAssignableFrom(declaredFields[i].getType())) {
                 InjectSubSystem fieldAnnotation = declaredFields[i].getAnnotation(InjectSubSystem.class);
-                injectField((SubSystem) target, declaredFields[i],
+                injectField(target, declaredFields[i],
                         fieldAnnotation != null ? fieldAnnotation.nullable() : nullable, subSystemMap);
             }
         }
