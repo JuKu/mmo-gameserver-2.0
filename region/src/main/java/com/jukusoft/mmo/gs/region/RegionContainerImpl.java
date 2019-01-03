@@ -181,6 +181,7 @@ public class RegionContainerImpl implements RegionContainer {
                         response.currentServerTime = System.currentTimeMillis();
                         response.staticObjects = new JsonObject();
                         response.currentGameWorldData = new JsonObject();
+                        response.currentGameWorldData.put("env", new JsonObject());
 
                         //fill static objects data
                         this.subSystemManager.fillStaticObjects(response.staticObjects, user, cid, posX, posY, posZ);
