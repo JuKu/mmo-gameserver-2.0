@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * Identifies injectable {@linkplain InjectSubSystem subsystem-fields} and classes
  * with those fields.
  *
- * @see SubSystemManager#addSubSystem(String, SubSystem)
+ * @see SubSystemManager#addSubSystem(Class, SubSystem)
  */
 @Target({ ElementType.FIELD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

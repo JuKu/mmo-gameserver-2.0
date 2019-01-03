@@ -113,6 +113,9 @@ public class RegionContainerImpl implements RegionContainer {
 
     /**
     * constructor for junit tests
+     *
+     * @param vertx vertx instance
+     * @param cachePath path to cache directory of region (ends with "/")
     */
     protected RegionContainerImpl (Vertx vertx, String cachePath) {
         this.vertx = vertx;

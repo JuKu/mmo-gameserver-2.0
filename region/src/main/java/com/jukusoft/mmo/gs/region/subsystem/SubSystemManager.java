@@ -29,16 +29,32 @@ public interface SubSystemManager {
 
     /**
     * get a specific subsystem
+     *
+     * @param cls class of subsystem to get
     */
     public <T extends SubSystem> T getSubSystem (Class<T> cls);
 
     /**
     * add all static objects to given json object to send to client
+     *
+     * @param json json object where data should be added
+     * @param user user instance
+     * @param cid character id
+     * @param posX posX
+     * @param posY posY
+     * @param posZ posZ
     */
     public void fillStaticObjects (JsonObject json, User user, int cid, float posX, float posY, float posZ);
 
     /**
      * add all game world data to given json object to send to client
+     *
+     * @param json json object where data should be added
+     * @param user user instance
+     * @param cid character id
+     * @param posX posX
+     * @param posY posY
+     * @param posZ posZ
      */
     public void fillGameWorldData (JsonObject json, User user, int cid, float posX, float posY, float posZ);
 
