@@ -14,13 +14,6 @@ public interface SubSystemManager {
     public <T extends SubSystem> void addSubSystem (Class<T> cls, T system);
 
     /**
-    * remove subsystem
-     *
-     * @param system instance of subsystem
-    */
-    public void removeSubSystem (SubSystem system);
-
-    /**
      * remove subsystem
      *
      * @param cls class of subsystem to remove

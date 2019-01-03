@@ -8,9 +8,13 @@ import com.jukusoft.mmo.gs.region.subsystem.StaticObjectsHolder;
 import com.jukusoft.mmo.gs.region.subsystem.SubSystem;
 import com.jukusoft.mmo.gs.region.subsystem.SubSystemManager;
 import com.jukusoft.mmo.gs.region.user.User;
+import com.jukusoft.mmo.gs.region.utils.DIUtils;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import org.mini2Dx.gdx.utils.Array;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SubSystemManagerImpl implements SubSystemManager {
 
@@ -22,7 +26,7 @@ public class SubSystemManagerImpl implements SubSystemManager {
     protected Array<SubSystem> list = new Array(false, INITIAL_CAPACITY);
 
     //map with subsystems
-    protected ObjectObjectMap<Class<?>,SubSystem> classToSubSystemMap = new ObjectObjectHashMap<>(INITIAL_CAPACITY);
+    protected Map<Class,SubSystem> classToSubSystemMap = new HashMap<>(INITIAL_CAPACITY);
 
     protected final Vertx vertx;
     protected final long regionID;
@@ -40,23 +44,15 @@ public class SubSystemManagerImpl implements SubSystemManager {
 
     @Override
     public <T extends SubSystem> void addSubSystem(Class<T> cls, T system) {
+        //inject other subsystems
+        DIUtils.injectSubSystems(system, system.getClass(), this.classToSubSystemMap);
+
         //first, initialize subsystem
         system.init(this.vertx, this.regionID, this.instanceID, this.shardID);
 
         Log.v(LOG_TAG, "added subsystem: " + system.getClass().getSimpleName());
         this.classToSubSystemMap.put(system.getClass(), system);
         this.list.add(system);
-    }
-
-    @Override
-    public void removeSubSystem(SubSystem system) {
-        this.list.removeValue(system, false);
-        system.shutdown();
-
-        //remove all name - system entries with the same object
-        this.classToSubSystemMap.removeAll((key, value) -> {
-            return value.equals(system);
-        });
     }
 
     @Override
