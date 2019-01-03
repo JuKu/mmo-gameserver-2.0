@@ -419,8 +419,8 @@ public class RegionContainerImpl implements RegionContainer {
         Log.i(LOG_TAG, "initialize subsystems...");
 
         //add subsystems
-        this.subSystemManager.addSubSystem("weather", new WeatherSubSystem());
-        this.subSystemManager.addSubSystem("characterService", new CharacterDataService());
+        this.subSystemManager.addSubSystem(WeatherSubSystem.class, new WeatherSubSystem());
+        this.subSystemManager.addSubSystem(CharacterDataService.class, new CharacterDataService());
     }
 
 }

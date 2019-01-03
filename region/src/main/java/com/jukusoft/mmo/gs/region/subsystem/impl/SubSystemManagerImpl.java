@@ -22,8 +22,7 @@ public class SubSystemManagerImpl implements SubSystemManager {
     protected Array<SubSystem> list = new Array(false, INITIAL_CAPACITY);
 
     //map with subsystems
-    protected ObjectObjectMap<String,SubSystem> subSystemsMap = new ObjectObjectHashMap<>(INITIAL_CAPACITY);
-    protected ObjectObjectMap<Class<?>,SubSystem> classToSubSystemMap = new ObjectObjectHashMap<>();
+    protected ObjectObjectMap<Class<?>,SubSystem> classToSubSystemMap = new ObjectObjectHashMap<>(INITIAL_CAPACITY);
 
     protected final Vertx vertx;
     protected final long regionID;
@@ -40,14 +39,12 @@ public class SubSystemManagerImpl implements SubSystemManager {
     }
 
     @Override
-    public void addSubSystem(String name, SubSystem system) {
+    public <T extends SubSystem> void addSubSystem(Class<T> cls, T system) {
         //first, initialize subsystem
         system.init(this.vertx, this.regionID, this.instanceID, this.shardID);
 
         Log.v(LOG_TAG, "added subsystem: " + system.getClass().getSimpleName());
         this.classToSubSystemMap.put(system.getClass(), system);
-
-        this.subSystemsMap.put(name, system);
         this.list.add(system);
     }
 
@@ -57,22 +54,21 @@ public class SubSystemManagerImpl implements SubSystemManager {
         system.shutdown();
 
         //remove all name - system entries with the same object
-        this.subSystemsMap.removeAll((key, value) -> {
+        this.classToSubSystemMap.removeAll((key, value) -> {
             return value.equals(system);
         });
     }
 
     @Override
-    public void removeSubSystem(String name) {
-        SubSystem system = this.subSystemsMap.get(name);
+    public <T extends SubSystem> void removeSubSystem(Class<T> cls) {
+        SubSystem system = this.classToSubSystemMap.get(cls);
 
         if (system == null) {
             //subsystem doesn't exists
-            return;
+            throw new IllegalStateException("subsystem '" + cls.getCanonicalName() + "' wasn't added before!");
         }
 
         this.list.removeValue(system, false);
-        this.subSystemsMap.remove(name);
         system.shutdown();
     }
 

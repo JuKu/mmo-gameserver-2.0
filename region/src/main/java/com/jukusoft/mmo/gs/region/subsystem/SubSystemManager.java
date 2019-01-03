@@ -8,10 +8,10 @@ public interface SubSystemManager {
     /**
     * add subsystem
      *
-     * @param name local unique name of subsystem
+     * @param cls local unique class of subsystem (can also be the interface of this subsystem which will be injected by other subsystems)
      * @param system instance of subsystem
     */
-    public void addSubSystem (String name, SubSystem system);
+    public <T extends SubSystem> void addSubSystem (Class<T> cls, T system);
 
     /**
     * remove subsystem
@@ -23,9 +23,9 @@ public interface SubSystemManager {
     /**
      * remove subsystem
      *
-     * @param name name of subsystem
+     * @param cls class of subsystem to remove
      */
-    public void removeSubSystem (String name);
+    public <T extends SubSystem> void removeSubSystem (Class<T> cls);
 
     /**
     * get a specific subsystem
