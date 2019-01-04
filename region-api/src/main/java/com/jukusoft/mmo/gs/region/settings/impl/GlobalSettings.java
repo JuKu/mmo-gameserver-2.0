@@ -58,7 +58,23 @@ public class GlobalSettings implements Settings {
             setLocal(event.getKey(), event.getValue());
         }, true);
 
-        //load all settings from database
+        //first load default settings from static database
+        try (DBClient client = Database.getClient("static")) {
+            try (ResultSet rs = client.query(SQL_GET_QUERY)) {
+                while (rs.next()) {
+                    String area = rs.getString("area");
+                    String key = rs.getString("key");
+                    String value = rs.getString("value");
+
+                    //update local cache
+                    this.setLocal(area, key, value);
+                }
+            }
+        } catch (Exception e) {
+            Log.w(LOG_TAG, "Exception while loading global settings: ", e);
+        }
+
+        //load all settings from dynamic database to override
         try (DBClient client = Database.getClient()) {
             try (ResultSet rs = client.query(SQL_GET_QUERY)) {
                 while (rs.next()) {
