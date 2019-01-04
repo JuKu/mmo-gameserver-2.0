@@ -66,7 +66,10 @@ public class SubSystemManagerImplTest {
     @Test
     public void testFillStaticObjects () {
         SubSystemManager subSystemManager = new SubSystemManagerImpl(Mockito.mock(Vertx.class), "region_1_1", 1, 1, 1);
+
+        //add subsystems
         subSystemManager.addSubSystem(TestStaticObjectsHolderSubSystem.class, new TestStaticObjectsHolderSubSystem());
+        subSystemManager.addSubSystem(TestSubSystem.class, new TestSubSystem());
 
         JsonObject json = new JsonObject();
         subSystemManager.fillStaticObjects(json, new User(1, "username", new ArrayList<>()), 2, 1, 1, 1);
@@ -78,8 +81,11 @@ public class SubSystemManagerImplTest {
 
     @Test
     public void testFillGameWorldData () {
+
+        //add subsystems
         SubSystemManager subSystemManager = new SubSystemManagerImpl(Mockito.mock(Vertx.class), "region_1_1", 1, 1, 1);
         subSystemManager.addSubSystem(TestGameWorldDataHolderSubSystem.class, new TestGameWorldDataHolderSubSystem());
+        subSystemManager.addSubSystem(TestSubSystem.class, new TestSubSystem());
 
         JsonObject json = new JsonObject();
         subSystemManager.fillGameWorldData(json, new User(1, "username", new ArrayList<>()), 2, 1, 1, 1);
