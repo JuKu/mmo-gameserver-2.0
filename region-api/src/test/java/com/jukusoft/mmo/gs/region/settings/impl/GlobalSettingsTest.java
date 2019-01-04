@@ -12,6 +12,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.sql.Connection;
@@ -48,18 +49,23 @@ public class GlobalSettingsTest {
         Database.getConnection();
 
         client = Mockito.mock(DBClient.class);
+
+        when(client.query(anyString())).thenAnswer((Answer<ResultSet>) invocation -> createResultSet());
+        Database.setJunitClient(client);
+    }
+
+   private static ResultSet createResultSet () throws SQLException {
         ResultSet rs = Mockito.mock(ResultSet.class);
         GlobalSettingsTest.rs = rs;
         when(rs.getString(anyString())).thenReturn("test");
 
-        AtomicInteger i = new AtomicInteger(2);
-        when(rs.next()).then((Answer<Boolean>) invocation -> {
-            System.err.println("i = " + i);
-            return i.getAndDecrement() > 0;
-        });
+       AtomicInteger i = new AtomicInteger(2);
+       when(rs.next()).then((Answer<Boolean>) invocation -> {
+           System.err.println("i = " + i);
+           return i.getAndDecrement() > 0;
+       });
 
-        when(client.query(anyString())).thenReturn(rs);
-        Database.setJunitClient(client);
+        return rs;
     }
 
     @Test
