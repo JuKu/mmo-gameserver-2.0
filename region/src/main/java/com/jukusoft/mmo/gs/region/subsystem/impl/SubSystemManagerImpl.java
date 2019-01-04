@@ -1,7 +1,5 @@
 package com.jukusoft.mmo.gs.region.subsystem.impl;
 
-import com.carrotsearch.hppc.ObjectObjectHashMap;
-import com.carrotsearch.hppc.ObjectObjectMap;
 import com.jukusoft.mmo.engine.shared.logger.Log;
 import com.jukusoft.mmo.gs.region.subsystem.GameWorldDataHolder;
 import com.jukusoft.mmo.gs.region.subsystem.StaticObjectsHolder;
@@ -15,6 +13,7 @@ import org.mini2Dx.gdx.utils.Array;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SubSystemManagerImpl implements SubSystemManager {
 
@@ -44,6 +43,9 @@ public class SubSystemManagerImpl implements SubSystemManager {
 
     @Override
     public <T extends SubSystem> void addSubSystem(Class<T> cls, T system) {
+        Objects.requireNonNull(cls);
+        Objects.requireNonNull(system);
+
         //inject other subsystems
         DIUtils.injectSubSystems(system, system.getClass(), this.classToSubSystemMap);
 
