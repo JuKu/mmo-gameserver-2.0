@@ -136,7 +136,10 @@ public class RegionContainerImpl implements RegionContainer {
         Log.i(LOG_TAG, "initialize region...");
 
         //download files for region from ftp server (in another thread to avoid blocking og this thread)
-        vertx.executeBlocking(event -> downloadFilesFromFtp(), (Handler<AsyncResult<Void>>) event -> {
+        vertx.executeBlocking(future -> {
+            downloadFilesFromFtp();
+            future.complete();
+        }, (Handler<AsyncResult<Void>>) event -> {
             //don't do anything here
         });
 
