@@ -31,6 +31,7 @@ import com.jukusoft.vertx.serializer.SerializableObject;
 import com.jukusoft.vertx.serializer.Serializer;
 import com.jukusoft.vertx.serializer.utils.ByteUtils;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -134,8 +135,10 @@ public class RegionContainerImpl implements RegionContainer {
     public void init() {
         Log.i(LOG_TAG, "initialize region...");
 
-        //download files for region from ftp server
-        this.downloadFilesFromFtp();
+        //download files for region from ftp server (in another thread to avoid blocking og this thread)
+        vertx.executeBlocking(event -> downloadFilesFromFtp(), (Handler<AsyncResult<Void>>) event -> {
+            //don't do anything here
+        });
 
         //load static region data from static database (they are fixed and cannot be changed at runtime - only with updates)
         this.loadStaticDataFromDB();
