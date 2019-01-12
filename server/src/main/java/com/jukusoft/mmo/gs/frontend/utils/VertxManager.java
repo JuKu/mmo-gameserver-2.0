@@ -48,6 +48,8 @@ public class VertxManager {
         //use clustered mode of vert.x
         this.vertxOptions.setClustered(true);
 
+        this.vertxOptions.setBlockedThreadCheckInterval(Config.getInt("Vertx", "blocked_thread_check_interval"));
+
         //set cluster manager
         this.vertxOptions.setClusterManager(this.clusterManager);
 
