@@ -419,7 +419,7 @@ public class RegionContainerImpl implements RegionContainer {
             }
         } catch (Exception e) {
             Log.e(LOG_TAG, "Cannot initialize region, because of SQLException while loading region static data from db: ", e);
-            return;
+            throw new RuntimeException("Cannot load region (" + regionID + "-" + instanceID + "-" + shardID + "): ", e);
         }
 
         Log.i(LOG_TAG, "loaded static data successfully!");
