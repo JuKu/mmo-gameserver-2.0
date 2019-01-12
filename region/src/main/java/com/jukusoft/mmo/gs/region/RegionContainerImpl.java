@@ -215,7 +215,7 @@ public class RegionContainerImpl implements RegionContainer {
 
         this.initialized = true;
 
-        vertx.executeBlocking(event -> {
+        vertx.executeBlocking(future -> {
             try {
                 ftpLatch.await();
             } catch (InterruptedException e) {
@@ -223,6 +223,7 @@ public class RegionContainerImpl implements RegionContainer {
             }
 
             this.initSubSystems();
+            future.complete();
         }, (Handler<AsyncResult<Void>>) event -> {
             //don't do anything here
         });
