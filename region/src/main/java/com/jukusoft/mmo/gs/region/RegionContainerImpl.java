@@ -24,6 +24,7 @@ import com.jukusoft.mmo.gs.region.subsystem.SubSystemManager;
 import com.jukusoft.mmo.gs.region.subsystem.impl.CharacterDataService;
 import com.jukusoft.mmo.gs.region.subsystem.impl.SubSystemManagerImpl;
 import com.jukusoft.mmo.gs.region.subsystem.impl.WeatherSubSystem;
+import com.jukusoft.mmo.gs.region.subsystem.impl.utils.NetHandlersProxy;
 import com.jukusoft.mmo.gs.region.user.User;
 import com.jukusoft.mmo.gs.region.utils.PlayerTuple;
 import com.jukusoft.vertx.connection.clientserver.RemoteConnection;
@@ -31,7 +32,6 @@ import com.jukusoft.vertx.serializer.SerializableObject;
 import com.jukusoft.vertx.serializer.Serializer;
 import com.jukusoft.vertx.serializer.utils.ByteUtils;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -429,6 +429,7 @@ public class RegionContainerImpl implements RegionContainer {
         Log.i(LOG_TAG, "initialize subsystems...");
 
         //add subsystems
+        this.subSystemManager.addSubSystem(NetHandlersProxy.class, new NetHandlersProxy(this.handlers()));
         this.subSystemManager.addSubSystem(WeatherSubSystem.class, new WeatherSubSystem());
         this.subSystemManager.addSubSystem(CharacterDataService.class, new CharacterDataService());
     }
