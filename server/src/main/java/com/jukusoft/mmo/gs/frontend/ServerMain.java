@@ -44,6 +44,7 @@ public class ServerMain {
     protected static final String CACHE_TAG = "Cache";
     protected static final String FTP_TAG = "FTP";
     protected static final String SECTION_NAME = "GameServer";
+    protected static final String HAZELCAST_MANCENTER_TAG = "HazelcastManCenter";
 
     public static void main (String[] args) {
         try {
@@ -298,6 +299,13 @@ public class ServerMain {
 
             CacheSimpleConfig cacheConfig = new CacheSimpleConfig();
             config.getCacheConfigs().put("session-cache", cacheConfig);
+
+            //https://docs.hazelcast.org/docs/management-center/3.9.4/manual/html/Deploying_and_Starting.html
+            if (Config.getBool(HAZELCAST_MANCENTER_TAG, "enabled")) {
+                //configure connection to hazelcast management center
+                config.getManagementCenterConfig().setEnabled(true);
+                config.getManagementCenterConfig().setUrl(Config.get(HAZELCAST_MANCENTER_TAG, "url"));
+            }
 
             return Hazelcast.newHazelcastInstance(config);
         } else {
