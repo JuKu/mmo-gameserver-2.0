@@ -17,7 +17,7 @@ hazelcast*
 config/hazelcast.cfg
 *hazelcast.cfg
 !config/hazelcast-example.cfg
-!*hazelcast-example.cfg
+!config/hazelcast.example.cfg
 config/ldap.cfg
 config/mysql.cfg
 config/ftp.cfg

@@ -1,6 +1,8 @@
 package com.jukusoft.mmo.gs.frontend;
 
 import com.hazelcast.config.CacheSimpleConfig;
+import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
@@ -305,6 +307,26 @@ public class ServerMain {
 
             CacheSimpleConfig cacheConfig = new CacheSimpleConfig();
             config.getCacheConfigs().put("session-cache", cacheConfig);
+
+            JoinConfig joinConfig = config.getNetworkConfig().getJoin();
+
+            if (Config.getBool(HAZELCAST_TAG, "joinConfig")) {
+                //disable other join configs
+                joinConfig.getMulticastConfig().setEnabled(false);
+
+                Log.i(HAZELCAST_TAG, "join config enabled.");
+                TcpIpConfig ipConfig = joinConfig.getTcpIpConfig();
+
+                String members = Config.get(HAZELCAST_TAG, "members");
+                String[] memberArray = members.split(",");
+                Log.i(HAZELCAST_TAG, "tcp/ip cluster members: " + members);
+
+                for (String member : memberArray) {
+                    ipConfig.addMember(member);
+                }
+
+                ipConfig.setEnabled(true);
+            }
 
             //https://docs.hazelcast.org/docs/management-center/3.9.4/manual/html/Deploying_and_Starting.html
             if (Config.getBool(HAZELCAST_MANCENTER_TAG, "enabled")) {
