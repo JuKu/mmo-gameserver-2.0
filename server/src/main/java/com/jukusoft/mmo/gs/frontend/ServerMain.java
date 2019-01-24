@@ -220,6 +220,7 @@ public class ServerMain {
         final String serverFingerprint = ip + ":" + port + ":" + Version.getInstance().getVersion();
         serverList.add(serverFingerprint);
 
+        Log.i("EventBus", "register eventBus '" + "gs-start-" + ip + ":" + port + "'.");
         vertx.eventBus().consumer("gs-start-" + ip + ":" + port, (Handler<Message<String>>) event -> {
             Log.d("Main", "region start message received.");
 
