@@ -209,6 +209,11 @@ public class ServerMain {
 
         String ip = Config.get(SECTION_NAME, "ip");
 
+        if (ip.equals("0.0.0.0")) {
+            ip = IPUtils.getOwnIP();
+            Log.i("Network", "detected own IP address: " + ip);
+        }
+
         //inform others in cluster that this gs server exists
         Log.i("Cluster", "add gameserver to hazelcast serverlist for load balancing.");
         IList<String> serverList = hazelcastInstance.getList("gs-servers-list");
