@@ -215,7 +215,11 @@ public class RegionContainerImpl implements RegionContainer {
 
         this.initialized = true;
 
-        vertx.executeBlocking(future -> {
+        waitForFtpLatch(ftpLatch);
+    }
+
+    protected void waitForFtpLatch (CountDownLatch ftpLatch) {
+        Thread thread = new Thread(() -> {
             try {
                 ftpLatch.await();
             } catch (InterruptedException e) {
@@ -223,10 +227,9 @@ public class RegionContainerImpl implements RegionContainer {
             }
 
             this.initSubSystems();
-            future.complete();
-        }, (Handler<AsyncResult<Void>>) event -> {
-            //don't do anything here
         });
+        thread.setName("ftp-downloader");
+        thread.start();
     }
 
     @Override

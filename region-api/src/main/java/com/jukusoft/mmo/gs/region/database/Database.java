@@ -153,7 +153,9 @@ public class Database {
     }
 
     public static void close () {
-        dataSource.close();
+        if (dataSource != null) {
+            dataSource.close();
+        }
 
         //close all other data sources too
         dataSourceMap.forEach((Consumer<ObjectObjectCursor<String, HikariDataSource>>) cursor -> {

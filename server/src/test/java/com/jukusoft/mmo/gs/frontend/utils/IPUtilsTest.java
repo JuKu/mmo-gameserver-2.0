@@ -18,8 +18,8 @@ public class IPUtilsTest {
         String ip = IPUtils.getOwnIP();
 
         //check, that no localhost or loopback ip is returned
-        assertEquals(false, ip.equals("127.0.0.1"));
-        assertEquals(false, ip.startsWith("127."));
+        assertEquals("IP cannot be 127.0.0.1 .", false, ip.equals("127.0.0.1"));
+        assertEquals("IP cannot start with 127.", false, ip.startsWith("127."));
     }
 
 }
