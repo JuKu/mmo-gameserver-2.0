@@ -38,7 +38,7 @@ public class StringMessageCodec implements MessageCodec<String, String> {
 
     @Override
     public byte systemCodecID() {
-        return 0;
+        return -1;
     }
 
 }
