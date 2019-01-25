@@ -302,8 +302,10 @@ public class ServerMain {
             //create an new hazelcast instance
             com.hazelcast.config.Config config = new com.hazelcast.config.Config();
 
-            //disable hazelcast logging
-            config.setProperty("hazelcast.logging.type", "none");
+            if (!Config.getBool(HAZELCAST_TAG, "hazelcastLogging")) {
+                //disable hazelcast logging
+                config.setProperty("hazelcast.logging.type", "none");
+            }
 
             CacheSimpleConfig cacheConfig = new CacheSimpleConfig();
             config.getCacheConfigs().put("session-cache", cacheConfig);
@@ -318,12 +320,8 @@ public class ServerMain {
                 TcpIpConfig ipConfig = joinConfig.getTcpIpConfig();
 
                 String members = Config.get(HAZELCAST_TAG, "members");
-                String[] memberArray = members.split(",");
+                ipConfig.addMember(members);
                 Log.i(HAZELCAST_TAG, "tcp/ip cluster members: " + members);
-
-                for (String member : memberArray) {
-                    ipConfig.addMember(member);
-                }
 
                 ipConfig.setEnabled(true);
             }
