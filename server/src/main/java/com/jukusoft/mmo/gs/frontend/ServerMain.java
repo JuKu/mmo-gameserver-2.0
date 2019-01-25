@@ -138,6 +138,9 @@ public class ServerMain {
         vertxManager.init(hazelcastInstance);
         Vertx vertx = vertxManager.getVertx();
 
+        Log.d("LB", "register string-to-string codec.");
+        vertx.eventBus().registerCodec(new StringMessageCodec());
+
         //initialize database connection
         DatabaseFactory.build(vertx).close();
 
